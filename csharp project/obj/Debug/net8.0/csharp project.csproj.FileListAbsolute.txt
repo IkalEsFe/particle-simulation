@@ -1,0 +1,15 @@
+/workspaces/particle-simulation/csharp project/obj/Debug/net8.0/csharp project.GeneratedMSBuildEditorConfig.editorconfig
+/workspaces/particle-simulation/csharp project/obj/Debug/net8.0/csharp project.AssemblyInfoInputs.cache
+/workspaces/particle-simulation/csharp project/obj/Debug/net8.0/csharp project.AssemblyInfo.cs
+/workspaces/particle-simulation/csharp project/obj/Debug/net8.0/csharp project.csproj.CoreCompileInputs.cache
+/workspaces/particle-simulation/csharp project/obj/Debug/net8.0/csharp project.sourcelink.json
+/workspaces/particle-simulation/csharp project/bin/Debug/net8.0/csharp project
+/workspaces/particle-simulation/csharp project/bin/Debug/net8.0/csharp project.deps.json
+/workspaces/particle-simulation/csharp project/bin/Debug/net8.0/csharp project.runtimeconfig.json
+/workspaces/particle-simulation/csharp project/bin/Debug/net8.0/csharp project.dll
+/workspaces/particle-simulation/csharp project/bin/Debug/net8.0/csharp project.pdb
+/workspaces/particle-simulation/csharp project/obj/Debug/net8.0/csharp project.dll
+/workspaces/particle-simulation/csharp project/obj/Debug/net8.0/refint/csharp project.dll
+/workspaces/particle-simulation/csharp project/obj/Debug/net8.0/csharp project.pdb
+/workspaces/particle-simulation/csharp project/obj/Debug/net8.0/csharp project.genruntimeconfig.cache
+/workspaces/particle-simulation/csharp project/obj/Debug/net8.0/ref/csharp project.dll
