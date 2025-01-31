@@ -5,8 +5,16 @@ class ParticleSimulation
     public static int columns;
     public static int rows;
     public static bool[,] grid = new bool[1,1];
-
+    public static int currentPosX;
+    public static int currentPosY;
     public static int spawnHeight;
+    public static int upChance;
+    public static int downChance;
+    public static int rightChance;
+    public static int leftChance;
+    public static int randomValue;
+
+    public static bool particleCreated;
 
     public static ConsoleSpinner spinner = new ConsoleSpinner();
 
@@ -37,11 +45,138 @@ class ParticleSimulation
             }
             Console.WriteLine("");
         }
-        Console.WriteLine("Presiona cualquier tecla para continuar.");
-        Console.ReadKey(true);
+        Console.WriteLine("Presiona [Enter] para continuar.");
+        Console.ReadLine();
         Console.Clear();
+
+
         Console.WriteLine("Escribe a que altura quieres que salgan las partículas: ");
         spawnHeight = Console.Read();
+        Console.Clear();
+
+        Console.WriteLine("A continuación decidiras las probabilidades de movimiento de la partícula.");
+        Console.WriteLine("Asegurate de que la suma de las probabilidades no exceda 100, eligiras entre arriba, abajo, derecha e izquierda.");
+        Console.WriteLine("Presiona [Enter] para continuar.");
+        Console.ReadLine();
+        Console.Clear();
+
+        ChooseChances();
+
+        while (true)
+        {
+            Loop();
+            Thread.Sleep(1000/10);
+        }
+    }
+
+    public static void ChooseChances()
+    {
+        Console.WriteLine("Escribe la probabilidad de que la particula se mueva hacia arriba: ");
+        upChance = Convert.ToInt32(Console.ReadLine());
+
+        Console.WriteLine("Escribe la probabilidad de que la particula se mueva hacia abajo: ");
+        downChance = Convert.ToInt32(Console.ReadLine());
+
+        Console.WriteLine("Escribe la probabilidad de que la particula se mueva hacia la derecha: ");
+        rightChance = Convert.ToInt32(Console.ReadLine());
+        
+        Console.WriteLine("Escribe la probabilidad de que la particula se mueva hacia la izquierda: ");
+        leftChance = Convert.ToInt32(Console.ReadLine());
+
+        if(upChance + downChance + rightChance + leftChance != 100)
+        {
+            Console.Clear();
+            Console.WriteLine("La suma de los valores no da 100, porfavor repitelos:");
+            ChooseChances();
+        }
+        else
+        {
+            downChance = upChance+downChance;
+            rightChance = downChance+rightChance;
+            leftChance = rightChance+leftChance;
+        }
+    }
+
+    public static void ShowGrid()
+    {
+        for (int i = 0; i < rows; i++)
+        {
+            for (int o = 0; o < columns; o++)
+            {
+                if (grid[i,o])
+                {
+                    Console.Write("[O] ");
+                }
+                else
+                {
+                    Console.Write("[] ");
+                }
+            }
+            Console.WriteLine("");
+        }
+    }
+
+    public static void Loop()
+    {
+        Console.Clear();
+        if(!particleCreated)
+        {
+            currentPosX = rnd.Next(0, columns);
+            currentPosY = rows-spawnHeight;
+            grid[currentPosX,currentPosY] = false;
+            ShowGrid();
+            return;
+        }
+        randomValue = rnd.Next(0, 100);
+        if (randomValue < upChance)
+        {
+            MoveUpwards();
+        }
+        else if (randomValue < downChance)
+        {
+            
+        }
+        else if (randomValue < rightChance)
+        {
+            
+        }
+        else if (randomValue < leftChance)
+        {
+            
+        }
+
+        ShowGrid();
+    }
+
+    public static void MoveUpwards()
+    {
+        if (grid[currentPosX,currentPosY-1])
+        {
+            particleCreated = false;
+        }
+        else if(rows-(currentPosY-1) > rows)
+        {
+            particleCreated = false;
+            grid[currentPosX,currentPosY] = false;
+        }
+        else
+        {
+            grid[currentPosX,currentPosY] = false;
+            currentPosY--;
+        }
+    }
+
+    public static void MoveDownwards()
+    {
+        if (grid[currentPosX,currentPosY+1])
+        {
+            particleCreated = false;
+        }
+        else
+        {
+            grid[currentPosX,currentPosY] = false;
+            currentPosY++;
+        }
     }
 
 }
