@@ -13,6 +13,7 @@ class ParticleSimulation
     public static int rightChance;
     public static int leftChance;
     public static int randomValue;
+    public static int particleAmount;
 
     public static bool particleCreated;
 
@@ -51,7 +52,11 @@ class ParticleSimulation
 
 
         Console.WriteLine("Escribe a que altura quieres que salgan las partículas: ");
-        spawnHeight = Console.Read();
+        spawnHeight = Convert.ToInt32(Console.ReadLine());
+        Console.Clear();
+
+        Console.WriteLine("Escribe la cantidad de partículas que quieres simular: ");
+        particleAmount = Convert.ToInt32(Console.ReadLine());
         Console.Clear();
 
         Console.WriteLine("A continuación decidiras las probabilidades de movimiento de la partícula.");
@@ -62,10 +67,12 @@ class ParticleSimulation
 
         ChooseChances();
 
-        while (true)
+        for(int i = 0; i < particleAmount; i++)
         {
             Loop();
-            Thread.Sleep(1000/10);
+            Console.WriteLine("Presiona [Enter] para continuar.");
+            Console.ReadLine();
+            // Thread.Sleep(1000/2);
         }
     }
 
@@ -109,7 +116,7 @@ class ParticleSimulation
                 }
                 else
                 {
-                    Console.Write("[] ");
+                    Console.Write("[ ] ");
                 }
             }
             Console.WriteLine("");
@@ -121,61 +128,106 @@ class ParticleSimulation
         Console.Clear();
         if(!particleCreated)
         {
+            particleCreated = true;
             currentPosX = rnd.Next(0, columns);
             currentPosY = rows-spawnHeight;
-            grid[currentPosX,currentPosY] = false;
+            grid[currentPosY,currentPosX] = true;
             ShowGrid();
             return;
         }
         randomValue = rnd.Next(0, 100);
         if (randomValue < upChance)
         {
+            Console.WriteLine("Arriba!");
             MoveUpwards();
         }
         else if (randomValue < downChance)
         {
-            
+            Console.WriteLine("Abajo!");
+            MoveDownwards();
         }
         else if (randomValue < rightChance)
         {
-            
+            Console.WriteLine("Derecha!");
+            MoveRight();
         }
-        else if (randomValue < leftChance)
+        else if (randomValue <= leftChance)
         {
-            
+            Console.WriteLine("Izquierda!");
+            MoveLeft();
         }
-
+        grid[currentPosY,currentPosX] = true;
         ShowGrid();
     }
 
     public static void MoveUpwards()
     {
-        if (grid[currentPosX,currentPosY-1])
+        if(rows-(currentPosY-1) > rows-1)
         {
             particleCreated = false;
+            grid[currentPosY,currentPosX] = false;
         }
-        else if(rows-(currentPosY-1) > rows)
+        else if (grid[currentPosY-1,currentPosX])
         {
             particleCreated = false;
-            grid[currentPosX,currentPosY] = false;
         }
         else
         {
-            grid[currentPosX,currentPosY] = false;
+            grid[currentPosY,currentPosX] = false;
             currentPosY--;
         }
     }
 
     public static void MoveDownwards()
     {
-        if (grid[currentPosX,currentPosY+1])
+        if(rows-(currentPosY+1) < 0)
+        {
+            particleCreated = false;
+        }
+        else if (grid[currentPosY+1,currentPosX])
         {
             particleCreated = false;
         }
         else
         {
-            grid[currentPosX,currentPosY] = false;
+            grid[currentPosY,currentPosX] = false;
             currentPosY++;
+        }
+    }
+
+    public static void MoveLeft()
+    {
+        if(currentPosX-1 < 0)
+        {
+            grid[currentPosY,currentPosX] = false;
+            currentPosX = columns;
+        }
+        else if (grid[currentPosY,currentPosX-1])
+        {
+            particleCreated = false;
+        }
+        else
+        {
+            grid[currentPosY,currentPosX] = false;
+            currentPosX--;
+        }
+    }
+
+    public static void MoveRight()
+    {
+        if(currentPosX+1 > columns-1)
+        {
+            grid[currentPosY,currentPosX] = false;
+            currentPosX = 0;
+        }
+        else if (grid[currentPosY,currentPosX+1])
+        {
+            particleCreated = false;
+        }
+        else
+        {
+            grid[currentPosY,currentPosX] = false;
+            currentPosX++;
         }
     }
 
