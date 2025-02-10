@@ -1,4 +1,4 @@
-﻿using System.Security.Cryptography;
+﻿using System;
 
 class ParticleSimulation
 {
@@ -14,6 +14,7 @@ class ParticleSimulation
     public static int leftChance;
     public static int randomValue;
     public static int particleAmount;
+    public static int createdParticles;
 
     public static bool particleCreated;
 
@@ -21,14 +22,21 @@ class ParticleSimulation
 
     public static Random rnd = new Random();
 
+    public static DateTime time = DateTime.Now;
+    public static string filePath = $"simulations/simulation-{time.Day}.{time.Month}.{time.Year}-{time.Hour}.{time.Minute}.{time.Second}.{time.Millisecond}";
+    public static StreamWriter rw = File.CreateText(filePath);
+    public static int frame = 0;
+
     static void Main()
     {
+        rw.AutoFlush = true;
         Console.Clear();
         Console.Write("Escribe el número de columnas: ");
         columns = Convert.ToInt32(Console.ReadLine());
         Console.Write("Escribe el número de filas: ");
         rows = Convert.ToInt32(Console.ReadLine());
         Console.Clear();
+        grid = new bool[columns,rows];
         spinner.Delay = 300;
         for (int i = 0; i < rnd.Next(5, 15); i++)
         {
@@ -37,12 +45,11 @@ class ParticleSimulation
         Console.Clear();
         Console.Write("Aquí está tu parrilla:");
         Console.WriteLine("");
-        grid = new bool[columns,rows];
         for (int i = 0; i < rows; i++)
         {
             for (int o = 0; o < columns; o++)
             {
-                Console.Write("[] ");
+                Console.Write("[ ] ");
             }
             Console.WriteLine("");
         }
@@ -67,13 +74,16 @@ class ParticleSimulation
 
         ChooseChances();
 
-        for(int i = 0; i < particleAmount; i++)
+        while(createdParticles <= particleAmount)
         {
             Loop();
-            Console.WriteLine("Presiona [Enter] para continuar.");
-            Console.ReadLine();
-            // Thread.Sleep(1000/2);
+            // Console.WriteLine($"La posición es: {currentPosX}, {currentPosY}");
+            // Console.WriteLine("Presiona [Enter] para continuar.");
+            // Console.ReadLine();
+            Thread.Sleep(1000/100);
+            // Console.WriteLine("Escribiendo archivo...");
         }
+        Console.WriteLine($"El archivo contiene {frame} frames.");
     }
 
     public static void ChooseChances()
@@ -123,49 +133,86 @@ class ParticleSimulation
         }
     }
 
+    public static async Task WriteFileAsyinc()
+    {
+        await rw.WriteLineAsync($"frame {frame}");
+        for (int i = 0; i < rows; i++)
+        {
+            for (int o = 0; o < columns; o++)
+            {
+                if (grid[i,o])
+                {
+                    await rw.WriteAsync($"({i},{o})");
+                }
+            }
+        }
+        await rw.WriteLineAsync("");
+        frame++;
+    }
+    public static void WriteFile()
+    {
+        rw.WriteLine($"frame {frame}");
+        for (int i = 0; i < rows; i++)
+        {
+            for (int o = 0; o < columns; o++)
+            {
+                if (grid[i,o])
+                {
+                    rw.Write($"({i},{o})");
+                }
+            }
+        }
+        rw.WriteLine("");
+        frame++;
+    }
+
     public static void Loop()
     {
         Console.Clear();
         if(!particleCreated)
         {
+            createdParticles++;
+            if(createdParticles > particleAmount)
+            {
+                ShowGrid();
+                WriteFile();
+                return;
+            }
             particleCreated = true;
             currentPosX = rnd.Next(0, columns);
             currentPosY = rows-spawnHeight;
             grid[currentPosY,currentPosX] = true;
             ShowGrid();
+            WriteFile();
             return;
         }
         randomValue = rnd.Next(0, 100);
         if (randomValue < upChance)
         {
-            Console.WriteLine("Arriba!");
             MoveUpwards();
         }
         else if (randomValue < downChance)
         {
-            Console.WriteLine("Abajo!");
             MoveDownwards();
         }
         else if (randomValue < rightChance)
         {
-            Console.WriteLine("Derecha!");
             MoveRight();
         }
         else if (randomValue <= leftChance)
         {
-            Console.WriteLine("Izquierda!");
             MoveLeft();
         }
-        grid[currentPosY,currentPosX] = true;
         ShowGrid();
+        WriteFile();
     }
 
     public static void MoveUpwards()
     {
-        if(rows-(currentPosY-1) > rows-1)
+        if(rows-currentPosY > rows-1)
         {
-            particleCreated = false;
             grid[currentPosY,currentPosX] = false;
+            particleCreated = false;
         }
         else if (grid[currentPosY-1,currentPosX])
         {
@@ -175,12 +222,13 @@ class ParticleSimulation
         {
             grid[currentPosY,currentPosX] = false;
             currentPosY--;
+            grid[currentPosY,currentPosX] = true;
         }
     }
 
     public static void MoveDownwards()
     {
-        if(rows-(currentPosY+1) < 0)
+        if(rows-(currentPosY+2) < 0)
         {
             particleCreated = false;
         }
@@ -192,6 +240,7 @@ class ParticleSimulation
         {
             grid[currentPosY,currentPosX] = false;
             currentPosY++;
+            grid[currentPosY,currentPosX] = true;
         }
     }
 
@@ -200,7 +249,7 @@ class ParticleSimulation
         if(currentPosX-1 < 0)
         {
             grid[currentPosY,currentPosX] = false;
-            currentPosX = columns;
+            currentPosX = columns-1;
         }
         else if (grid[currentPosY,currentPosX-1])
         {
@@ -210,6 +259,7 @@ class ParticleSimulation
         {
             grid[currentPosY,currentPosX] = false;
             currentPosX--;
+            grid[currentPosY,currentPosX] = true;
         }
     }
 
@@ -229,6 +279,7 @@ class ParticleSimulation
             grid[currentPosY,currentPosX] = false;
             currentPosX++;
         }
+        grid[currentPosY,currentPosX] = true;
     }
 
 }
