@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Particle Simulation</title>
+    <link rel="stylesheet" href="main.css">
+</head>
+<body>
+    <h1>Simulación de Partículas</h1>
+    <li>
+        <ul class="column-row">
+            <p>Elige el número de columnas:</p> <textarea name="Columns" id="columns" placeholder="Ej: 500" class="input"></textarea>
+        </ul>
+        <ul class="column-row">
+            <p>Elige el número de filas:</p> <textarea name="Rows" id="rows" placeholder="Ej: 700" class="input"></textarea>
+        </ul>
+    </li>
+        <p>Elige la altura de aparicion de las partículas:</p> <textarea name="Height" id="height" placeholder="Ej: 500" class="input"></textarea>
+    <li id="slider-holder">
+        <p>Elige las probabilidades de movimiento de las partículas</p>
+        <ul class="chance-slider-holder">
+            <p class="slider-text">Arriba:</p> <input type="range" name="UpChance" id="up-chance" class="chance-slider">
+        </ul>
+        <ul class="chance-slider-holder">
+            <p class="slider-text">Abajo:</p> <input type="range" name="DownChance" id="down-chance" class="chance-slider">
+        </ul>
+        <ul class="chance-slider-holder">
+            <p class="slider-text">Izquierda:</p> <input type="range" name="LeftChance" id="left-chance" class="chance-slider">
+        </ul>
+        <ul class="chance-slider-holder">
+            <p class="slider-text">Derecha:</p> <input type="range" name="RightChance" id="right-chance" class="chance-slider">
+        </ul>
+    </li>
+    
+</body>
+</html>
