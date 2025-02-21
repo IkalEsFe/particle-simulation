@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Particle Simulation</title>
     <link rel="stylesheet" href="main.css">
+    <script src="main.js"></script>
 </head>
 <body>
     <h1>Simulación de Partículas</h1>
@@ -20,16 +21,16 @@
     <li id="slider-holder">
         <p>Elige las probabilidades de movimiento de las partículas</p>
         <ul class="chance-slider-holder">
-            <p class="slider-text">Arriba:</p> <input type="range" name="UpChance" id="up-chance" class="chance-slider">
+            <div class="text-holder"><p class="slider-text">Arriba:</p></div> <input type="range" onchange="changeSliderText('UpText', this)" name="UpChance" id="up-chance" class="chance-slider"> <div class="text-holder"><p class="result-text" id="UpText">50</p></div>
         </ul>
         <ul class="chance-slider-holder">
-            <p class="slider-text">Abajo:</p> <input type="range" name="DownChance" id="down-chance" class="chance-slider">
+            <div class="text-holder"><p class="slider-text">Abajo:</p></div> <input type="range" onchange="changeSliderText('DownText', this)" name="DownChance" id="down-chance" class="chance-slider"> <div class="text-holder"><p class="result-text" id="DownText">50</p></div>
         </ul>
         <ul class="chance-slider-holder">
-            <p class="slider-text">Izquierda:</p> <input type="range" name="LeftChance" id="left-chance" class="chance-slider">
+            <div class="text-holder"><p class="slider-text">Izquierda:</p></div> <input type="range" onchange="changeSliderText('LeftText', this)" name="LeftChance" id="left-chance" class="chance-slider"> <div class="text-holder"><p class="result-text" id="LeftText">50</p></div>
         </ul>
         <ul class="chance-slider-holder">
-            <p class="slider-text">Derecha:</p> <input type="range" name="RightChance" id="right-chance" class="chance-slider">
+            <div class="text-holder"><p class="slider-text">Derecha:</p></div> <input type="range" onchange="changeSliderText('RightText', this)" name="RightChance" id="right-chance" class="chance-slider"> <div class="text-holder"><p class="result-text" id="RightText">50</p></div>
         </ul>
     </li>
     

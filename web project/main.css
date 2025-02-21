@@ -28,7 +28,13 @@ html
 }
 
 
+.text-holder
+{
+    display: inline-block;
+    width: 100px;
+}
+
 .slider-text
 {
-    line-break: strict;
+    text-align: left;
 }
