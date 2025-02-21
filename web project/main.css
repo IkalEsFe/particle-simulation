@@ -25,6 +25,7 @@ html
 .chance-slider
 {
     display: inline-block;
+    transform: translateY(6px);
 }
 
 
