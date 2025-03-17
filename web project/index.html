@@ -10,29 +10,37 @@
     <h1>Simulación de Partículas</h1>
     <li>
         <ul class="column-row">
-            <p>Elige el número de columnas:</p> <textarea name="Columns" id="columns" placeholder="Ej: 500" class="input"></textarea>
+            <p>Elige el número de columnas:</p> <input type="number" name="Columns" id="columns" placeholder="Ej: 500" min="10" class="input"></input>
         </ul>
         <ul class="column-row">
-            <p>Elige el número de filas:</p> <textarea name="Rows" id="rows" placeholder="Ej: 700" class="input"></textarea>
+            <p>Elige el número de filas:</p> <input type="number" name="Rows" id="rows" placeholder="Ej: 700" min="10" class="input"></input>
         </ul>
     </li>
-        <p>Elige la altura de aparicion de las partículas:</p> <textarea name="Height" id="height" placeholder="Ej: 500" class="input"></textarea>
+        <p>Elige la altura de aparicion de las partículas:</p> <input type="number" name="Height" id="height" placeholder="Ej: 500" min="7" class="input"></input>
     <li id="slider-holder">
         <p>Elige las probabilidades de movimiento de las partículas</p>
         <ul class="chance-slider-holder">
-            <div class="text-holder"><p class="slider-text">Arriba:</p></div> <input type="range" name="UpChance" oninput="changeSliderText('UpText', this)" id="UpChance" value=25 class="chance-slider"> <div class="text-holder"><p class="result-text" id="UpText">25</p></div>
+            <div class="text-holder"><p class="slider-text">Arriba:</p></div> <input type="range" name="UpChance" oninput="onSliderChange(this)" id="UpChance" value=25 class="chance-slider"> <div class="text-holder"><p class="result-text" id="UpText">25</p></div>
         </ul>
         <ul class="chance-slider-holder">
-            <div class="text-holder"><p class="slider-text">Abajo:</p></div> <input type="range" name="DownChance" oninput="changeSliderText('DownText', this)" id="DownChance" value=25 class="chance-slider"> <div class="text-holder"><p class="result-text" id="DownText">25</p></div>
+            <div class="text-holder"><p class="slider-text">Abajo:</p></div> <input type="range" name="DownChance" oninput="onSliderChange(this)" id="DownChance" value=25 class="chance-slider"> <div class="text-holder"><p class="result-text" id="DownText">25</p></div>
         </ul>
         <ul class="chance-slider-holder">
-            <div class="text-holder"><p class="slider-text">Izquierda:</p></div> <input type="range" name="LeftChance" oninput="changeSliderText('LeftText', this)" id="LeftChance" value=25 class="chance-slider"> <div class="text-holder"><p class="result-text" id="LeftText">25</p></div>
+            <div class="text-holder"><p class="slider-text">Izquierda:</p></div> <input type="range" name="LeftChance" oninput="onSliderChange(this)" id="LeftChance" value=25 class="chance-slider"> <div class="text-holder"><p class="result-text" id="LeftText">25</p></div>
         </ul>
         <ul class="chance-slider-holder">
-            <div class="text-holder"><p class="slider-text">Derecha:</p></div> <input type="range" name="RightChance" oninput="changeSliderText('RightText', this)" id="RightChance" value=25 class="chance-slider"> <div class="text-holder"><p class="result-text" id="RightText">25</p></div>
+            <div class="text-holder"><p class="slider-text">Derecha:</p></div> <input type="range" name="RightChance" oninput="onSliderChange(this)" id="RightChance" value=25 class="chance-slider"> <div class="text-holder"><p class="result-text" id="RightText">25</p></div>
         </ul>
     </li>
-    
+        <p>Elige la velocidad de simulación</p> <input type="number" name="Speed" id="speed" placeholder="Escribe 0 para instantáneo", min="0" class="input"></input>
+        <p></p>
+        <p id="import-text">Importar: </p> <input type="file" value="Importar", id="import">
+        <p></p>
+        <input type="button" value="Generar", id="generate", class="final-button", onclick="generateSimulation()">
+        <input type="button" value="Guardar", id="save", class="final-button">
+        <input type="button" value="Cargar", id="load", class="final-button">
+        <p></p>
+    <canvas id="simulation-canvas"></canvas>
 </body>
 <script src="main.js"></script>
 </html>

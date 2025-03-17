@@ -39,3 +39,16 @@ html
 {
     text-align: left;
 }
+
+.final-button
+{
+    font-size: 20px;
+    width: 150px;
+    height: 50px;
+    margin: 10px;
+}
+
+#import-text
+{
+    display: inline-block;
+}
