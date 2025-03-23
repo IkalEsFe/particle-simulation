@@ -36,7 +36,7 @@ function checkSliderValues(changingSlider)
 {
     highestSliderID = -1;
     highestSliderValue = 0;
-    lowesSliderID = -1;
+    lowestSliderID = -1;
     lowestSliderValue = 100;
     changingSliderID = getSliderID(changingSlider.id);
     totalValue = 0;
@@ -107,15 +107,15 @@ var getSliderID = function(slider)
 
 function generateSimulation()
 {
-    columns = document.getElementById("columns").value;
-    rows = document.getElementById("rows").value;
-    height = document.getElementById("height").value;
+    // ctx.imageSmoothingEnabled = false;
+    columns = parseInt(document.getElementById("columns").value);
+    rows = parseInt(document.getElementById("rows").value);
+    height = parseInt(document.getElementById("height").value);
     upChance = sliders[0].value;
     downChance = sliders[1].value;
     leftChance = sliders[2].value;
     rightChance = sliders[3].value;
-    speed = document.getElementById("speed").value;
-    console.log(columns)
+    speed = parseInt(document.getElementById("speed").value);
 
     if (columns == "" || rows == "" || height == "" || speed == "") {
         alert("Hay valores sin asignar");
@@ -127,6 +127,27 @@ function generateSimulation()
         return;
     }
 
-    ctx.createImageData(columns, height);
+    simCanvas.width = columns;
+    simCanvas.height = rows;
+    createPixel(10, 10);
 
+}
+
+function createPixelRaw(xPos, yPos, r, g, b, a) {
+    var id = ctx.createImageData(1, 1);
+    for(var i=0;i<id.data.length/4;i++)
+    {
+        id.data[4*i] = r;
+        id.data[4*i+1] = g;
+        id.data[4*i+2] = b;
+        id.data[4*i+3] = a;
+    }
+    ctx.putImageData(id,xPos*2,yPos*2);
+}
+function createPixel(xPos, yPos) {
+    createPixelRaw(xPos*2, yPos*2, 255, 0, 0, 255)
+}
+
+function removePixel(xPos, yPos) {
+    createPixelRaw(xPos*2, yPos*2, 0, 0, 0, 0)
 }

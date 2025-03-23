@@ -52,3 +52,12 @@ html
 {
     display: inline-block;
 }
+
+#simulation-canvas
+{
+    outline-style: solid;
+    outline-width: 2px;
+    outline-color: black;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+}
