@@ -17,6 +17,12 @@ var downChance = 25;
 var leftChance = 25;
 var rightChance = 25;
 var speed = 0;
+var particleAmount = 0;
+
+var currentParticlePosX = 0;
+var currentParticlePosY = 0;
+var isParticleCreated = false;
+var occupiedPositions = []
 
 function onSliderChange(slider) {
     console.log(slider);
@@ -116,8 +122,10 @@ function generateSimulation()
     leftChance = sliders[2].value;
     rightChance = sliders[3].value;
     speed = parseInt(document.getElementById("speed").value);
+    particleAmount = parseInt(document.getElementById("amount").value);
+    if (speed == "") speed = 0
 
-    if (columns == "" || rows == "" || height == "" || speed == "") {
+    if (columns == "" || rows == "" || height == "" || amount == "") {
         alert("Hay valores sin asignar");
         return;
     }
@@ -129,9 +137,144 @@ function generateSimulation()
 
     simCanvas.width = columns;
     simCanvas.height = rows;
-    createPixel(10, 10);
+    downChance = downChance+upChance;
+    leftChance = leftChance+downChance;
+    rightChance = rightChance+leftChance;
 
+    simulateParticles();
 }
+
+const simulateParticles = async () => {
+    while (particleAmount > 0)
+    {
+        if (!isParticleCreated)
+        {
+            particleAmount--;
+            currentParticlePosY = rows-height;
+            currentParticlePosX = Math.floor(Math.random() * columns)
+            createPixel(currentParticlePosX, currentParticlePosY)
+            isParticleCreated = true;
+            console.log("Particle Created");
+        }
+        else
+        {
+            var randomMovement = Math.floor(Math.random()*100)
+            if(randomMovement < upChance)
+                moveParticleUp();
+            else if(randomMovement < downChance)
+                moveParticleDown();
+            else if(randomMovement < leftChance)
+                moveParticleLeft();
+            else if(randomMovement < rightChance)
+                moveParticleRight();
+            console.log("Particle Moved");
+        }
+        await simulationDelay();
+        console.log("Finished Waiting");
+    }
+};
+
+const simulationDelay = async () => {
+    if (speed > 0)
+        await delay(1/speed);
+};
+
+const delay = ms => new Promise(res => setTimeout(res, ms));
+
+function moveParticleUp()
+{
+    if (!isPositionOccupied(currentParticlePosX, currentParticlePosY-1)) 
+    {
+        if (currentParticlePosY-1 < 0)
+        {
+            removePixel(currentParticlePosX, currentParticlePosY);
+            occupiedPositions.push([currentParticlePosX, currentParticlePosY])
+            isParticleCreated = false;
+        }
+        else
+        {
+            removePixel(currentParticlePosX, currentParticlePosY);
+            currentParticlePosY--;
+            createPixel(currentParticlePosX, currentParticlePosY);
+        }
+    }
+    else
+    {
+        occupiedPositions.push([currentParticlePosX, currentParticlePosY])
+        isParticleCreated = false;
+    }
+}
+function moveParticleDown()
+{
+    if (!isPositionOccupied(currentParticlePosX, currentParticlePosY+1)) 
+    {
+        if (currentParticlePosY+1 >= rows)
+        {
+            occupiedPositions.push([currentParticlePosX, currentParticlePosY])
+            isParticleCreated = false;
+        }
+        else
+        {
+            removePixel(currentParticlePosX, currentParticlePosY);
+            currentParticlePosY++;
+            createPixel(currentParticlePosX, currentParticlePosY);
+        }
+    }
+    else
+    {
+        occupiedPositions.push([currentParticlePosX, currentParticlePosY])
+        isParticleCreated = false;
+    }
+}
+function moveParticleLeft()
+{
+    if (!isPositionOccupied(currentParticlePosX-1, currentParticlePosY)) 
+    {
+        removePixel(currentParticlePosX, currentParticlePosY);
+        if (currentParticlePosX-1 < 0)
+        {
+            currentParticlePosX = columns-1;
+        }
+        else
+        {
+            currentParticlePosX--;
+        }
+        createPixel(currentParticlePosX, currentParticlePosY);
+    }
+    else
+    {
+        occupiedPositions.push([currentParticlePosX, currentParticlePosY])
+        isParticleCreated = false;
+    }
+}
+function moveParticleRight()
+{
+    if (!isPositionOccupied(currentParticlePosX+1, currentParticlePosY)) 
+    {
+        removePixel(currentParticlePosX, currentParticlePosY);
+        if (currentParticlePosX+1 >= columns)
+        {
+            currentParticlePosX = 0;
+        }
+        else
+        {
+            currentParticlePosX++;
+        }
+        createPixel(currentParticlePosX, currentParticlePosY);
+    }
+    else
+    {
+        occupiedPositions.push([currentParticlePosX, currentParticlePosY])
+        isParticleCreated = false;
+    }
+}
+
+
+function isPositionOccupied(xPos, yPos)
+{
+    return occupiedPositions.includes([xPos, yPos]);
+}
+
 
 function createPixelRaw(xPos, yPos, r, g, b, a) {
     var id = ctx.createImageData(1, 1);
@@ -142,12 +285,12 @@ function createPixelRaw(xPos, yPos, r, g, b, a) {
         id.data[4*i+2] = b;
         id.data[4*i+3] = a;
     }
-    ctx.putImageData(id,xPos*2,yPos*2);
+    ctx.putImageData(id,xPos,yPos);
 }
 function createPixel(xPos, yPos) {
-    createPixelRaw(xPos*2, yPos*2, 255, 0, 0, 255)
+    createPixelRaw(xPos, yPos, 255, 0, 0, 255)
 }
 
 function removePixel(xPos, yPos) {
-    createPixelRaw(xPos*2, yPos*2, 0, 0, 0, 0)
+    createPixelRaw(xPos, yPos, 0, 0, 0, 0)
 }
