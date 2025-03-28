@@ -8,6 +8,7 @@ var totalValue = 0;
 var changingSliderID = 0;
 var simCanvas = document.getElementById("simulation-canvas");
 var ctx = simCanvas.getContext("2d");
+var sizeMultiplier = 10;
 
 var columns = 0;
 var rows = 0;
@@ -111,16 +112,17 @@ var getSliderID = function(slider)
     return 0;
 }
 
+
 function generateSimulation()
 {
     // ctx.imageSmoothingEnabled = false;
     columns = parseInt(document.getElementById("columns").value);
     rows = parseInt(document.getElementById("rows").value);
     height = parseInt(document.getElementById("height").value);
-    upChance = sliders[0].value;
-    downChance = sliders[1].value;
-    leftChance = sliders[2].value;
-    rightChance = sliders[3].value;
+    upChance = parseInt(sliders[0].value);
+    downChance = parseInt(sliders[1].value);
+    leftChance = parseInt(sliders[2].value);
+    rightChance = parseInt(sliders[3].value);
     speed = parseInt(document.getElementById("speed").value);
     particleAmount = parseInt(document.getElementById("amount").value);
     if (speed == "") speed = 0
@@ -135,26 +137,33 @@ function generateSimulation()
         return;
     }
 
-    simCanvas.width = columns;
-    simCanvas.height = rows;
+    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+    isParticleCreated = false;
+    simCanvas.width = columns*sizeMultiplier;
+    simCanvas.height = rows*sizeMultiplier;
     downChance = downChance+upChance;
     leftChance = leftChance+downChance;
     rightChance = rightChance+leftChance;
-
     simulateParticles();
 }
 
 const simulateParticles = async () => {
-    while (particleAmount > 0)
+    while (particleAmount >= 0)
     {
         if (!isParticleCreated)
         {
-            particleAmount--;
-            currentParticlePosY = rows-height;
-            currentParticlePosX = Math.floor(Math.random() * columns)
-            createPixel(currentParticlePosX, currentParticlePosY)
-            isParticleCreated = true;
-            console.log("Particle Created");
+            if (speed == 0)
+            {
+                await delay(1)
+            }
+            if(particleAmount > 0)
+            {
+                particleAmount--;
+                currentParticlePosY = rows-height;
+                currentParticlePosX = Math.floor(Math.random() * columns)
+                createPixel(currentParticlePosX, currentParticlePosY)
+                isParticleCreated = true;
+            }
         }
         else
         {
@@ -167,16 +176,18 @@ const simulateParticles = async () => {
                 moveParticleLeft();
             else if(randomMovement < rightChance)
                 moveParticleRight();
-            console.log("Particle Moved");
         }
-        await simulationDelay();
-        console.log("Finished Waiting");
+        
+        if (speed > 0)
+        {
+            await simulationDelay();
+        }
     }
 };
 
+
 const simulationDelay = async () => {
-    if (speed > 0)
-        await delay(1/speed);
+    await delay(1000/speed);
 };
 
 const delay = ms => new Promise(res => setTimeout(res, ms));
@@ -200,6 +211,7 @@ function moveParticleUp()
     }
     else
     {
+        console.log("Up position occupied");
         occupiedPositions.push([currentParticlePosX, currentParticlePosY])
         isParticleCreated = false;
     }
@@ -222,6 +234,7 @@ function moveParticleDown()
     }
     else
     {
+        console.log("Down position occupied");
         occupiedPositions.push([currentParticlePosX, currentParticlePosY])
         isParticleCreated = false;
     }
@@ -243,6 +256,7 @@ function moveParticleLeft()
     }
     else
     {
+        console.log("Left position occupied");
         occupiedPositions.push([currentParticlePosX, currentParticlePosY])
         isParticleCreated = false;
     }
@@ -264,6 +278,7 @@ function moveParticleRight()
     }
     else
     {
+        console.log("Right position occupied");
         occupiedPositions.push([currentParticlePosX, currentParticlePosY])
         isParticleCreated = false;
     }
@@ -272,12 +287,17 @@ function moveParticleRight()
 
 function isPositionOccupied(xPos, yPos)
 {
-    return occupiedPositions.includes([xPos, yPos]);
+    for (let i = 0; i < occupiedPositions.length; i++) {
+        if (occupiedPositions[i][0] == xPos && occupiedPositions[i][1] == yPos) {
+            return true
+        }
+    }
+    return false;
 }
 
 
 function createPixelRaw(xPos, yPos, r, g, b, a) {
-    var id = ctx.createImageData(1, 1);
+    var id = ctx.createImageData(sizeMultiplier, sizeMultiplier);
     for(var i=0;i<id.data.length/4;i++)
     {
         id.data[4*i] = r;
@@ -285,7 +305,7 @@ function createPixelRaw(xPos, yPos, r, g, b, a) {
         id.data[4*i+2] = b;
         id.data[4*i+3] = a;
     }
-    ctx.putImageData(id,xPos,yPos);
+    ctx.putImageData(id,xPos*sizeMultiplier,yPos*sizeMultiplier);
 }
 function createPixel(xPos, yPos) {
     createPixelRaw(xPos, yPos, 255, 0, 0, 255)

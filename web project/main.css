@@ -4,6 +4,11 @@ html
     text-align: center;
 }
 
+li
+{
+    list-style-type: none;
+}
+
 .input
 {
     resize: none;
