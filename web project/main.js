@@ -8,7 +8,9 @@ var totalValue = 0;
 var changingSliderID = 0;
 var simCanvas = document.getElementById("simulation-canvas");
 var ctx = simCanvas.getContext("2d");
-var sizeMultiplier = 10;
+var sizeMultiplier = 2;
+var maxInstantMovements = 10000;
+var movementsDone = 0;
 
 var columns = 0;
 var rows = 0;
@@ -112,6 +114,10 @@ var getSliderID = function(slider)
     return 0;
 }
 
+function emptyArray()
+{
+    return []
+}
 
 function generateSimulation()
 {
@@ -138,6 +144,8 @@ function generateSimulation()
     }
 
     ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+    occupiedPositions = emptyArray();
+    console.log(occupiedPositions)
     isParticleCreated = false;
     simCanvas.width = columns*sizeMultiplier;
     simCanvas.height = rows*sizeMultiplier;
@@ -152,10 +160,11 @@ const simulateParticles = async () => {
     {
         if (!isParticleCreated)
         {
-            if (speed == 0)
+            if(particleAmount == 0)
             {
-                await delay(1)
+                particleAmount--;
             }
+
             if(particleAmount > 0)
             {
                 particleAmount--;
@@ -167,6 +176,12 @@ const simulateParticles = async () => {
         }
         else
         {
+            if (movementsDone >= maxInstantMovements && speed == 0)
+            {
+                movementsDone = 0;
+                await delay(1);
+            }
+            movementsDone++;
             var randomMovement = Math.floor(Math.random()*100)
             if(randomMovement < upChance)
                 moveParticleUp();
@@ -183,6 +198,7 @@ const simulateParticles = async () => {
             await simulationDelay();
         }
     }
+    console.log("done!");
 };
 
 
@@ -289,6 +305,7 @@ function isPositionOccupied(xPos, yPos)
 {
     for (let i = 0; i < occupiedPositions.length; i++) {
         if (occupiedPositions[i][0] == xPos && occupiedPositions[i][1] == yPos) {
+            console.log(occupiedPositions[i])
             return true
         }
     }
