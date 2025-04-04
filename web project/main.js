@@ -9,7 +9,7 @@ var changingSliderID = 0;
 var simCanvas = document.getElementById("simulation-canvas");
 var ctx = simCanvas.getContext("2d");
 var sizeMultiplier = 2;
-var maxInstantMovements = 10000;
+var maxInstantMovements = 4000;
 var movementsDone = 0;
 
 var columns = 0;
@@ -26,6 +26,8 @@ var currentParticlePosX = 0;
 var currentParticlePosY = 0;
 var isParticleCreated = false;
 var occupiedPositions = []
+var file = new Blob([""], { type: 'text/plain' });
+const reader = new FileReader();
 
 function onSliderChange(slider) {
     console.log(slider);
@@ -119,6 +121,31 @@ function emptyArray()
     return []
 }
 
+function createSimulationTextfile()
+{
+    var oldText
+    file.text().then((response) =>
+    {
+        oldText = response
+    })
+    file = new Blob([oldText, "Hello World1"], { type: 'text/plain' })
+    file.text().then((response) =>
+    {
+        oldText = response
+    })
+    file = new Blob([oldText, "Hello World2"], { type: 'text/plain' })
+    downloadSimulation()
+}
+
+function downloadSimulation()
+{
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(file);
+    link.download = "simulation.txt";
+    link.click();
+    URL.revokeObjectURL(link.href);
+}
+
 function generateSimulation()
 {
     // ctx.imageSmoothingEnabled = false;
@@ -184,13 +211,13 @@ const simulateParticles = async () => {
             movementsDone++;
             var randomMovement = Math.floor(Math.random()*100)
             if(randomMovement < upChance)
-                moveParticleUp();
+                moveParticleUpRealTime();
             else if(randomMovement < downChance)
-                moveParticleDown();
+                moveParticleDownRealTime();
             else if(randomMovement < leftChance)
-                moveParticleLeft();
+                moveParticleLeftRealTime();
             else if(randomMovement < rightChance)
-                moveParticleRight();
+                moveParticleRightRealTime();
         }
         
         if (speed > 0)
@@ -208,14 +235,13 @@ const simulationDelay = async () => {
 
 const delay = ms => new Promise(res => setTimeout(res, ms));
 
-function moveParticleUp()
+function moveParticleUpRealTime()
 {
     if (!isPositionOccupied(currentParticlePosX, currentParticlePosY-1)) 
     {
         if (currentParticlePosY-1 < 0)
         {
             removePixel(currentParticlePosX, currentParticlePosY);
-            occupiedPositions.push([currentParticlePosX, currentParticlePosY])
             isParticleCreated = false;
         }
         else
@@ -232,7 +258,7 @@ function moveParticleUp()
         isParticleCreated = false;
     }
 }
-function moveParticleDown()
+function moveParticleDownRealTime()
 {
     if (!isPositionOccupied(currentParticlePosX, currentParticlePosY+1)) 
     {
@@ -255,7 +281,7 @@ function moveParticleDown()
         isParticleCreated = false;
     }
 }
-function moveParticleLeft()
+function moveParticleLeftRealTime()
 {
     if (!isPositionOccupied(currentParticlePosX-1, currentParticlePosY)) 
     {
@@ -277,7 +303,7 @@ function moveParticleLeft()
         isParticleCreated = false;
     }
 }
-function moveParticleRight()
+function moveParticleRightRealTime()
 {
     if (!isPositionOccupied(currentParticlePosX+1, currentParticlePosY)) 
     {
@@ -299,6 +325,7 @@ function moveParticleRight()
         isParticleCreated = false;
     }
 }
+
 
 
 function isPositionOccupied(xPos, yPos)
