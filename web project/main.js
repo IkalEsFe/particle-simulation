@@ -10,6 +10,7 @@ var simCanvas = document.getElementById("simulation-canvas");
 var ctx = simCanvas.getContext("2d");
 var sizeMultiplier = 2;
 var maxInstantMovements = 4000;
+var maxInstantMovementsFile = 4000;
 var movementsDone = 0;
 
 var columns = 0;
@@ -21,12 +22,16 @@ var leftChance = 25;
 var rightChance = 25;
 var speed = 0;
 var particleAmount = 0;
+var currentFrame = 0;
 
 var currentParticlePosX = 0;
 var currentParticlePosY = 0;
 var isParticleCreated = false;
-var occupiedPositions = []
-var file = new Blob([""], { type: 'text/plain' });
+var occupiedPositions = [];
+var occupiedPositionsString = "";
+var currentPositionString = "";
+var files = []
+var file = new Blob([""]);
 const reader = new FileReader();
 
 function onSliderChange(slider) {
@@ -123,18 +128,8 @@ function emptyArray()
 
 function createSimulationTextfile()
 {
-    var oldText
-    file.text().then((response) =>
-    {
-        oldText = response
-    })
-    file = new Blob([oldText, "Hello World1"], { type: 'text/plain' })
-    file.text().then((response) =>
-    {
-        oldText = response
-    })
-    file = new Blob([oldText, "Hello World2"], { type: 'text/plain' })
-    downloadSimulation()
+    simulationSetup();
+    simulateFile();
 }
 
 function downloadSimulation()
@@ -149,6 +144,12 @@ function downloadSimulation()
 function generateSimulation()
 {
     // ctx.imageSmoothingEnabled = false;
+    simulationSetup();
+    simulateParticles();
+}
+
+function simulationSetup()
+{
     columns = parseInt(document.getElementById("columns").value);
     rows = parseInt(document.getElementById("rows").value);
     height = parseInt(document.getElementById("height").value);
@@ -158,6 +159,7 @@ function generateSimulation()
     rightChance = parseInt(sliders[3].value);
     speed = parseInt(document.getElementById("speed").value);
     particleAmount = parseInt(document.getElementById("amount").value);
+    currentFrame = 0;
     if (speed == "") speed = 0
 
     if (columns == "" || rows == "" || height == "" || amount == "") {
@@ -171,15 +173,61 @@ function generateSimulation()
     }
 
     ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-    occupiedPositions = emptyArray();
-    console.log(occupiedPositions)
     isParticleCreated = false;
     simCanvas.width = columns*sizeMultiplier;
     simCanvas.height = rows*sizeMultiplier;
     downChance = downChance+upChance;
     leftChance = leftChance+downChance;
     rightChance = rightChance+leftChance;
-    simulateParticles();
+}
+
+const simulateFile = async () => {
+    while (particleAmount >= 0)
+    {
+        file = new Blob([file, "\nFrame "+currentFrame])
+        if (!isParticleCreated)
+        {
+            
+            if(particleAmount == 0)
+            {
+                particleAmount--;
+            }
+
+            if(particleAmount > 0)
+            {
+                if (particleAmount % 500 == 0) {
+                    files.push(file);
+                    file = new Blob([""])
+                }
+                particleAmount--;
+                currentParticlePosY = rows-height;
+                currentParticlePosX = Math.floor(Math.random() * columns)
+                currentPositionString = `(${currentParticlePosX},${currentParticlePosY})`;
+                isParticleCreated = true;
+            }
+        }
+        else
+        {
+            if (movementsDone >= maxInstantMovementsFile)
+            {
+                movementsDone = 0;
+                await delay(100);
+            }
+            movementsDone++;
+            var randomMovement = Math.floor(Math.random()*100)
+            if(randomMovement < upChance)
+                moveParticleUpFile();
+            else if(randomMovement < downChance)
+                moveParticleDownFile();
+            else if(randomMovement < leftChance)
+                moveParticleLeftFile();
+            else if(randomMovement < rightChance)
+                moveParticleRightFile();
+        }
+        file = new Blob([file, "\n"+occupiedPositionsString+currentPositionString])
+        currentFrame++;
+    }
+    downloadSimulation()
 }
 
 const simulateParticles = async () => {
@@ -326,6 +374,95 @@ function moveParticleRightRealTime()
     }
 }
 
+
+function moveParticleUpFile()
+{
+    if (!isPositionOccupied(currentParticlePosX, currentParticlePosY-1)) 
+    {
+        if (currentParticlePosY-1 < 0)
+        {
+            currentPositionString = "";
+            isParticleCreated = false;
+        }
+        else
+        {
+            currentParticlePosY--;
+            occupiedPositions.push([currentParticlePosX, currentParticlePosY])
+            currentPositionString = `(${currentParticlePosX},${currentParticlePosY})`;
+        }
+    }
+    else
+    {
+        occupiedPositionsString += currentPositionString;
+        
+        isParticleCreated = false;
+    }
+}
+function moveParticleDownFile()
+{
+    if (!isPositionOccupied(currentParticlePosX, currentParticlePosY+1)) 
+    {
+        if (currentParticlePosY+1 >= rows)
+        {
+            occupiedPositions.push([currentParticlePosX, currentParticlePosY])
+            occupiedPositionsString += currentPositionString;
+            isParticleCreated = false;
+        }
+        else
+        {
+            currentParticlePosY++;
+            currentPositionString = `(${currentParticlePosX},${currentParticlePosY})`;
+        }
+    }
+    else
+    {
+        occupiedPositions.push([currentParticlePosX, currentParticlePosY])
+        currentPositionString = `(${currentParticlePosX},${currentParticlePosY})`;
+        isParticleCreated = false;
+    }
+}
+function moveParticleLeftFile()
+{
+    if (!isPositionOccupied(currentParticlePosX-1, currentParticlePosY)) 
+    {
+        if (currentParticlePosX-1 < 0)
+        {
+            currentParticlePosX = columns-1;
+        }
+        else
+        {
+            currentParticlePosX--;
+        }
+        currentPositionString = `(${currentParticlePosX},${currentParticlePosY})`;
+    }
+    else
+    {
+        occupiedPositions.push([currentParticlePosX, currentParticlePosY])
+        occupiedPositionsString += currentPositionString;
+        isParticleCreated = false;
+    }
+}
+function moveParticleRightFile()
+{
+    if (!isPositionOccupied(currentParticlePosX+1, currentParticlePosY)) 
+    {
+        if (currentParticlePosX+1 >= columns)
+        {
+            currentParticlePosX = 0;
+        }
+        else
+        {
+            currentParticlePosX++;
+        }
+        currentPositionString = `(${currentParticlePosX},${currentParticlePosY})`;
+    }
+    else
+    {
+        occupiedPositions.push([currentParticlePosX, currentParticlePosY])
+        occupiedPositionsString += currentPositionString;
+        isParticleCreated = false;
+    }
+}
 
 
 function isPositionOccupied(xPos, yPos)
