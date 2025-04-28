@@ -31,7 +31,7 @@ var occupiedPositions = [];
 var occupiedPositionsString = "";
 var currentPositionString = "";
 var files = []
-var file = new Blob([""]);
+var file = new Blob([""], { type: "text/plain"});
 const reader = new FileReader();
 
 function onSliderChange(slider) {
@@ -134,11 +134,15 @@ function createSimulationTextfile()
 
 function downloadSimulation()
 {
-    const link = document.createElement("a");
-    link.href = URL.createObjectURL(file);
-    link.download = "simulation.txt";
-    link.click();
-    URL.revokeObjectURL(link.href);
+    var zip = new jszip();
+    for (let i = 0; i < files.length; i++) {
+        const element = files[i];
+        zip.file(`Simulation${i}.txt`, element)
+    }
+    zip.generateAsync({type:"blob"}).then(function(content){
+        FileSaver.saveAs(content, "simulation.zip")
+    });
+    console.log("yO")
 }
 
 function generateSimulation()
@@ -197,7 +201,7 @@ const simulateFile = async () => {
             {
                 if (particleAmount % 500 == 0) {
                     files.push(file);
-                    file = new Blob([""])
+                    file = new Blob([""], { type: "text/plain"})
                 }
                 particleAmount--;
                 currentParticlePosY = rows-height;
@@ -224,7 +228,7 @@ const simulateFile = async () => {
             else if(randomMovement < rightChance)
                 moveParticleRightFile();
         }
-        file = new Blob([file, "\n"+occupiedPositionsString+currentPositionString])
+        file = new Blob([file, "\n"+occupiedPositionsString+currentPositionString], { type: "text/plain"})
         currentFrame++;
     }
     downloadSimulation()
