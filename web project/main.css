@@ -70,3 +70,9 @@ li
     image-rendering: pixelated;
     image-rendering: crisp-edges;
 }
+
+#SimulationTime
+{
+    width: 1000px;
+    height: 50px;
+}

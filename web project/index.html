@@ -37,11 +37,13 @@
     </li>
         <p>Elige la velocidad de simulación</p> <input type="number" name="Speed" id="speed" value="10" placeholder="Escribe 0 para instantáneo", min="0" class="input"></input>
         <p></p>
-        <p id="import-text">Importar: </p> <input type="file" value="Importar", id="import">
+        <p id="import-text">Importar: </p> <input type="file" value="Importar", id="import", accept="text/plain">
         <p></p>
-        <input type="button" value="Generar", id="generate", class="final-button", onclick="generateSimulation()">
+        <!-- <input type="button" value="Generar", id="generate", class="final-button", onclick="generateSimulation()"> -->
         <input type="button" value="Guardar", id="save", class="final-button", onclick="createSimulationTextfile()">
-        <input type="button" value="Cargar", id="load", class="final-button">
+        <input type="button" value="Cargar", id="load", class="final-button", onclick="loadSimulation()">
+        <p></p>
+        <input type="range" name="SimulationMoment" id="SimulationTime" value=0 disabled="true">
         <p></p>
     <canvas id="simulation-canvas", width="300", height="300"></canvas>
 </body>

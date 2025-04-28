@@ -7,6 +7,8 @@ var lowestSliderValue = 0
 var totalValue = 0;
 var changingSliderID = 0;
 var simCanvas = document.getElementById("simulation-canvas");
+var simSlider = document.getElementById("SimulationTime");
+var importer = document.getElementById("import");
 var ctx = simCanvas.getContext("2d");
 var sizeMultiplier = 2;
 var maxInstantMovements = 4000;
@@ -30,7 +32,6 @@ var isParticleCreated = false;
 var occupiedPositions = [];
 var occupiedPositionsString = "";
 var currentPositionString = "";
-var files = []
 var file = new Blob([""], { type: "text/plain"});
 const reader = new FileReader();
 
@@ -121,6 +122,20 @@ var getSliderID = function(slider)
     return 0;
 }
 
+function loadSimulation()
+{
+    const selectedFile = importer.files[0];
+    console.log(selectedFile);
+    if (selectedFile == null)
+    {
+        alert("No hay ningún archivo seleccionado")
+        return
+    }
+    const text=reader.readAsText(selectedFile)
+    console.log(text)
+    simSlider.disabled = false
+}
+
 function emptyArray()
 {
     return []
@@ -134,14 +149,11 @@ function createSimulationTextfile()
 
 function downloadSimulation()
 {
-    var zip = new jszip();
-    for (let i = 0; i < files.length; i++) {
-        const element = files[i];
-        zip.file(`Simulation${i}.txt`, element)
-    }
-    zip.generateAsync({type:"blob"}).then(function(content){
-        FileSaver.saveAs(content, "simulation.zip")
-    });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(file);
+    link.download = "simulation.txt";
+    link.click();
+    URL.revokeObjectURL(link.href);
     console.log("yO")
 }
 
@@ -199,10 +211,6 @@ const simulateFile = async () => {
 
             if(particleAmount > 0)
             {
-                if (particleAmount % 500 == 0) {
-                    files.push(file);
-                    file = new Blob([""], { type: "text/plain"})
-                }
                 particleAmount--;
                 currentParticlePosY = rows-height;
                 currentParticlePosX = Math.floor(Math.random() * columns)
