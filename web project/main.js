@@ -14,6 +14,7 @@ var sizeMultiplier = 2;
 var maxInstantMovements = 4000;
 var maxInstantMovementsFile = 4000;
 var movementsDone = 0;
+var currentSimLines;
 
 var columns = 0;
 var rows = 0;
@@ -32,21 +33,32 @@ var isParticleCreated = false;
 var occupiedPositions = [];
 var occupiedPositionsString = "";
 var currentPositionString = "";
-var file = new Blob([""], { type: "text/plain"});
+var file;
 const reader = new FileReader();
 
 function onSliderChange(slider) {
-    console.log(slider);
-    checkSliderValues(slider);
+    // checkSliderValues(slider);
+    updateSlidersText()
 }
 
 function updateSlidersText()
 {
+    var total = 0
     for (let i = 0; i < sliders.length; i++)
     {
         var currentText = sliderTexts[i];
         currentText.textContent = sliders[i].value;
+        total += parseInt(sliders[i].value)
     }
+    if (total > 100)
+    {
+        sliderTexts[4].style.color = 'red';
+    }
+    else
+    {
+        sliderTexts[4].style.color = 'black';
+    }
+    sliderTexts[4].textContent = total
 }
 
 function checkSliderValues(changingSlider)
@@ -92,47 +104,72 @@ function checkSliderValues(changingSlider)
         sliders[lowestSliderID].value -= (totalValue-100);
     }
 
-    console.log(highestSliderID);
-    console.log(highestSliderValue);
-    console.log(totalValue);
+    // console.log(highestSliderID);
+    // console.log(highestSliderValue);
+    // console.log(totalValue);
     updateSlidersText();
 
 }
 
 var getSliderID = function(slider)
 {
-    console.log(slider);
     if (slider == "UpChance") {
-        console.log("Return 0");
         return 0;
     }
     else if (slider == "DownChance") {
-        console.log("Return 1");
         return 1;
     }
     else if (slider == "LeftChance") {
-        console.log("Return 2");
         return 2;
     }
     else if (slider == "RightChance") {
-        console.log("Return 3");
         return 3;
     }
-    console.log("Outside");
     return 0;
+}
+
+function setSimulationMoment(slider)
+{
+    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+    var value = parseInt(slider.value)
+    var moment = parseInt(value)*2
+    var frame = currentSimLines[moment+1]
+    var pixels = frame.split(")")
+    pixels.forEach(pixel => {
+        var dividedPixel = pixel.split("(")
+        pixel = dividedPixel[1]
+        coords = pixel.split(",")
+        createPixel(coords[0], coords[1])
+    });
 }
 
 function loadSimulation()
 {
     const selectedFile = importer.files[0];
-    console.log(selectedFile);
     if (selectedFile == null)
     {
         alert("No hay ningún archivo seleccionado")
         return
     }
-    const text=reader.readAsText(selectedFile)
-    console.log(text)
+    reader.readAsText(selectedFile)
+    reader.addEventListener(
+    "load",
+        () => {
+            // this will then display a text file
+            var lines = reader.result.split("\n")
+            var options = lines[0].split(",")
+            columns = options[0]
+            rows = options[1]
+            simCanvas.width = columns*sizeMultiplier;
+            simCanvas.height = rows*sizeMultiplier;
+            lines.shift()
+            var frame = lines[lines.length-2]
+            var frameNum = parseInt(frame.replace(/^\D+/g, ''));
+            simSlider.max = frameNum
+            currentSimLines = lines
+        },
+        false,
+    );
     simSlider.disabled = false
 }
 
@@ -154,7 +191,6 @@ function downloadSimulation()
     link.download = "simulation.txt";
     link.click();
     URL.revokeObjectURL(link.href);
-    console.log("yO")
 }
 
 function generateSimulation()
@@ -187,7 +223,8 @@ function simulationSetup()
         alert("La altura de aparición debe ser menor que la cantidad de filas");
         return;
     }
-
+    occupiedPositions = emptyArray()
+    occupiedPositionsString = ""
     ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
     isParticleCreated = false;
     simCanvas.width = columns*sizeMultiplier;
@@ -198,6 +235,7 @@ function simulationSetup()
 }
 
 const simulateFile = async () => {
+    file = new Blob([columns + "," + rows], { type: "text/plain" })
     while (particleAmount >= 0)
     {
         file = new Blob([file, "\nFrame "+currentFrame])
@@ -223,7 +261,7 @@ const simulateFile = async () => {
             if (movementsDone >= maxInstantMovementsFile)
             {
                 movementsDone = 0;
-                await delay(100);
+                await delay(10);
             }
             movementsDone++;
             var randomMovement = Math.floor(Math.random()*100)
@@ -313,7 +351,6 @@ function moveParticleUpRealTime()
     }
     else
     {
-        console.log("Up position occupied");
         occupiedPositions.push([currentParticlePosX, currentParticlePosY])
         isParticleCreated = false;
     }
@@ -336,7 +373,6 @@ function moveParticleDownRealTime()
     }
     else
     {
-        console.log("Down position occupied");
         occupiedPositions.push([currentParticlePosX, currentParticlePosY])
         isParticleCreated = false;
     }
@@ -358,7 +394,6 @@ function moveParticleLeftRealTime()
     }
     else
     {
-        console.log("Left position occupied");
         occupiedPositions.push([currentParticlePosX, currentParticlePosY])
         isParticleCreated = false;
     }
@@ -380,7 +415,6 @@ function moveParticleRightRealTime()
     }
     else
     {
-        console.log("Right position occupied");
         occupiedPositions.push([currentParticlePosX, currentParticlePosY])
         isParticleCreated = false;
     }
@@ -399,14 +433,14 @@ function moveParticleUpFile()
         else
         {
             currentParticlePosY--;
-            occupiedPositions.push([currentParticlePosX, currentParticlePosY])
             currentPositionString = `(${currentParticlePosX},${currentParticlePosY})`;
         }
     }
     else
     {
+        console.log("Up position occupied");
         occupiedPositionsString += currentPositionString;
-        
+        occupiedPositions.push([currentParticlePosX, currentParticlePosY])
         isParticleCreated = false;
     }
 }
@@ -428,6 +462,7 @@ function moveParticleDownFile()
     }
     else
     {
+        console.log("Down position occupied");
         occupiedPositions.push([currentParticlePosX, currentParticlePosY])
         currentPositionString = `(${currentParticlePosX},${currentParticlePosY})`;
         isParticleCreated = false;
@@ -449,6 +484,7 @@ function moveParticleLeftFile()
     }
     else
     {
+        console.log("Left position occupied");
         occupiedPositions.push([currentParticlePosX, currentParticlePosY])
         occupiedPositionsString += currentPositionString;
         isParticleCreated = false;
@@ -470,6 +506,7 @@ function moveParticleRightFile()
     }
     else
     {
+        console.log("Right position occupied");
         occupiedPositions.push([currentParticlePosX, currentParticlePosY])
         occupiedPositionsString += currentPositionString;
         isParticleCreated = false;
@@ -481,6 +518,7 @@ function isPositionOccupied(xPos, yPos)
 {
     for (let i = 0; i < occupiedPositions.length; i++) {
         if (occupiedPositions[i][0] == xPos && occupiedPositions[i][1] == yPos) {
+            console.log(currentFrame)
             console.log(occupiedPositions[i])
             return true
         }

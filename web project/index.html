@@ -26,13 +26,16 @@
             <div class="text-holder"><p class="slider-text">Arriba:</p></div> <input type="range" name="UpChance" oninput="onSliderChange(this)" id="UpChance" value=25 class="chance-slider"> <div class="text-holder"><p class="result-text" id="UpText">25</p></div>
         </ul>
         <ul class="chance-slider-holder">
-            <div class="text-holder"><p class="slider-text">Abajo:</p></div> <input type="range" name="DownChance" oninput="onSliderChange(this)" id="DownChance" value=25 class="chance-slider"> <div class="text-holder"><p class="result-text" id="DownText">25</p></div>
+            <div class="text-holder"><p class="slider-text">Abajo:</p></div> <input type="range" name="DownChance" oninput="onSliderChange(this)" id="DownChance" value=25 class="chance-slider"> <div class="text-holder"> <input type="text" value=25 class="result-text" id="DownText></div>
         </ul>
         <ul class="chance-slider-holder">
             <div class="text-holder"><p class="slider-text">Izquierda:</p></div> <input type="range" name="LeftChance" oninput="onSliderChange(this)" id="LeftChance" value=25 class="chance-slider"> <div class="text-holder"><p class="result-text" id="LeftText">25</p></div>
         </ul>
         <ul class="chance-slider-holder">
             <div class="text-holder"><p class="slider-text">Derecha:</p></div> <input type="range" name="RightChance" oninput="onSliderChange(this)" id="RightChance" value=25 class="chance-slider"> <div class="text-holder"><p class="result-text" id="RightText">25</p></div>
+        </ul>
+        <ul class="chance-slider-holder">
+            <div class="text-holder"><p class="slider-text">Total:</p></div> <div class="text-holder"><p class="result-text" id="TotalText">100</p></div>
         </ul>
     </li>
         <p>Elige la velocidad de simulación</p> <input type="number" name="Speed" id="speed" value="10" placeholder="Escribe 0 para instantáneo", min="0" class="input"></input>
@@ -43,7 +46,7 @@
         <input type="button" value="Guardar", id="save", class="final-button", onclick="createSimulationTextfile()">
         <input type="button" value="Cargar", id="load", class="final-button", onclick="loadSimulation()">
         <p></p>
-        <input type="range" name="SimulationMoment" id="SimulationTime" value=0 disabled="true">
+        <input type="range" name="SimulationMoment" id="SimulationTime" value=0 disabled="true", oninput="setSimulationMoment(this)">
         <p></p>
     <canvas id="simulation-canvas", width="300", height="300"></canvas>
 </body>
