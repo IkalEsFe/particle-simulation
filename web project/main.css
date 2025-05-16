@@ -42,7 +42,6 @@ li
     transform: translateY(6px);
 }
 
-
 .text-holder
 {
     display: inline-block;
@@ -52,6 +51,12 @@ li
 .slider-text
 {
     text-align: left;
+}
+
+.result-text
+{
+    transform: translateX(6px);
+    width: 100px
 }
 
 .final-button

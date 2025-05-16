@@ -1,5 +1,6 @@
 var sliders = document.getElementsByClassName("chance-slider");
 var sliderTexts = document.getElementsByClassName("result-text");
+var totalPercentage = document.getElementById("TotalText")
 var highestSliderID = 0
 var highestSliderValue = 0
 var lowestSliderID = 0
@@ -10,7 +11,7 @@ var simCanvas = document.getElementById("simulation-canvas");
 var simSlider = document.getElementById("SimulationTime");
 var importer = document.getElementById("import");
 var ctx = simCanvas.getContext("2d");
-var sizeMultiplier = 2;
+var sizeMultiplier = 10;
 var maxInstantMovements = 4000;
 var maxInstantMovementsFile = 4000;
 var movementsDone = 0;
@@ -36,9 +37,61 @@ var currentPositionString = "";
 var file;
 const reader = new FileReader();
 
+var inputs = document.querySelectorAll("input")
+
+inputs.forEach(element => {
+    element.addEventListener("keypress", function (e) {
+    var allowedChars = '0123456789';
+    function contains(stringValue, charValue) {
+        return stringValue.indexOf(charValue) > -1;
+    }
+    var invalidKey = e.key.length === 1 && !contains(allowedChars, e.key)
+            || e.key === '.' && contains(e.target.value, '.');
+    invalidKey && e.preventDefault();});
+});
+
 function onSliderChange(slider) {
     // checkSliderValues(slider);
     updateSlidersText()
+}
+
+function onChanceChange(text)
+{
+    if (text.value > 100) text.value = 100
+    if (text.value < 0) text.value = 0
+
+    if (text.id == "UpText")
+    {
+        sliders[0].value = text.value
+    }
+    if (text.id == "DownText")
+    {
+        sliders[1].value = text.value
+    }
+    if (text.id == "LeftText")
+    {
+        sliders[2].value = text.value
+    }
+    if (text.id == "RightText")
+    {
+        sliders[3].value = text.value
+    }
+
+    
+    var total = 0
+    for (let i = 0; i < sliders.length; i++)
+    {
+        total += parseInt(sliders[i].value)
+    }
+    if (total > 100)
+    {
+        totalPercentage.style.color = 'red';
+    }
+    else
+    {
+        totalPercentage.style.color = 'black';
+    }
+    totalPercentage.textContent = total
 }
 
 function updateSlidersText()
@@ -47,18 +100,18 @@ function updateSlidersText()
     for (let i = 0; i < sliders.length; i++)
     {
         var currentText = sliderTexts[i];
-        currentText.textContent = sliders[i].value;
+        currentText.value = sliders[i].value;
         total += parseInt(sliders[i].value)
     }
     if (total > 100)
     {
-        sliderTexts[4].style.color = 'red';
+        totalPercentage.style.color = 'red';
     }
     else
     {
-        sliderTexts[4].style.color = 'black';
+        totalPercentage.style.color = 'black';
     }
-    sliderTexts[4].textContent = total
+    totalPercentage.textContent = total
 }
 
 function checkSliderValues(changingSlider)
@@ -439,6 +492,7 @@ function moveParticleUpFile()
     else
     {
         console.log("Up position occupied");
+        currentPositionString = `(${currentParticlePosX},${currentParticlePosY})`;
         occupiedPositionsString += currentPositionString;
         occupiedPositions.push([currentParticlePosX, currentParticlePosY])
         isParticleCreated = false;
@@ -450,6 +504,7 @@ function moveParticleDownFile()
     {
         if (currentParticlePosY+1 >= rows)
         {
+            currentPositionString = `(${currentParticlePosX},${currentParticlePosY})`;
             occupiedPositions.push([currentParticlePosX, currentParticlePosY])
             occupiedPositionsString += currentPositionString;
             isParticleCreated = false;
@@ -463,6 +518,7 @@ function moveParticleDownFile()
     else
     {
         console.log("Down position occupied");
+        currentPositionString = `(${currentParticlePosX},${currentParticlePosY})`;
         occupiedPositions.push([currentParticlePosX, currentParticlePosY])
         currentPositionString = `(${currentParticlePosX},${currentParticlePosY})`;
         isParticleCreated = false;
@@ -485,6 +541,7 @@ function moveParticleLeftFile()
     else
     {
         console.log("Left position occupied");
+        currentPositionString = `(${currentParticlePosX},${currentParticlePosY})`;
         occupiedPositions.push([currentParticlePosX, currentParticlePosY])
         occupiedPositionsString += currentPositionString;
         isParticleCreated = false;
@@ -507,6 +564,7 @@ function moveParticleRightFile()
     else
     {
         console.log("Right position occupied");
+        currentPositionString = `(${currentParticlePosX},${currentParticlePosY})`;
         occupiedPositions.push([currentParticlePosX, currentParticlePosY])
         occupiedPositionsString += currentPositionString;
         isParticleCreated = false;

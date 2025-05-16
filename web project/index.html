@@ -23,19 +23,45 @@
     <li id="slider-holder">
         <p>Elige las probabilidades de movimiento de las partículas</p>
         <ul class="chance-slider-holder">
-            <div class="text-holder"><p class="slider-text">Arriba:</p></div> <input type="range" name="UpChance" oninput="onSliderChange(this)" id="UpChance" value=25 class="chance-slider"> <div class="text-holder"><p class="result-text" id="UpText">25</p></div>
+            <div class="text-holder">
+                <p class="slider-text">Arriba:</p>
+            </div> 
+            <input type="range" name="UpChance" oninput="onSliderChange(this)" id="UpChance" value=25 class="chance-slider"> 
+            <div class="text-holder">
+                <input type="number" min="0" max="100" value=25 class="result-text" id="UpText" oninput="onChanceChange(this)">
+            </div>
+        </ul>
+
+        <ul class="chance-slider-holder">
+            <div class="text-holder">
+                <p class="slider-text">Abajo:</p>
+            </div> 
+            <input type="range" name="DownChance" oninput="onSliderChange(this)" id="DownChance" value=25 class="chance-slider"> 
+            <div class="text-holder">
+                <input type="number" min="0" max="100" value=25 class="result-text" id="DownText" oninput="onChanceChange(this)">
+            </div>
+        </ul>
+
+        <ul class="chance-slider-holder">
+            <div class="text-holder">
+                <p class="slider-text">Izquierda:</p>
+            </div> 
+            <input type="range" name="LeftChance" oninput="onSliderChange(this)" id="LeftChance" value=25 class="chance-slider">
+            <div class="text-holder"> 
+                <input type="number" min="0" max="100" value=25 class="result-text" id="LeftText" oninput="onChanceChange(this)">
+            </div>
         </ul>
         <ul class="chance-slider-holder">
-            <div class="text-holder"><p class="slider-text">Abajo:</p></div> <input type="range" name="DownChance" oninput="onSliderChange(this)" id="DownChance" value=25 class="chance-slider"> <div class="text-holder"> <input type="text" value=25 class="result-text" id="DownText></div>
+            <div class="text-holder">
+                <p class="slider-text">Derecha:</p>
+            </div> 
+            <input type="range" name="RightChance" oninput="onSliderChange(this)" id="RightChance" value=25 class="chance-slider"> 
+            <div class="text-holder">
+                <input type="number" min="0" max="100" value=25 class="result-text"  id="RightText" oninput="onChanceChange(this)">
+            </div>
         </ul>
         <ul class="chance-slider-holder">
-            <div class="text-holder"><p class="slider-text">Izquierda:</p></div> <input type="range" name="LeftChance" oninput="onSliderChange(this)" id="LeftChance" value=25 class="chance-slider"> <div class="text-holder"><p class="result-text" id="LeftText">25</p></div>
-        </ul>
-        <ul class="chance-slider-holder">
-            <div class="text-holder"><p class="slider-text">Derecha:</p></div> <input type="range" name="RightChance" oninput="onSliderChange(this)" id="RightChance" value=25 class="chance-slider"> <div class="text-holder"><p class="result-text" id="RightText">25</p></div>
-        </ul>
-        <ul class="chance-slider-holder">
-            <div class="text-holder"><p class="slider-text">Total:</p></div> <div class="text-holder"><p class="result-text" id="TotalText">100</p></div>
+            <div class="text-holder"><p class="slider-text">Total:</p></div> <div class="text-holder"><p id="TotalText">100</p></div>
         </ul>
     </li>
         <p>Elige la velocidad de simulación</p> <input type="number" name="Speed" id="speed" value="10" placeholder="Escribe 0 para instantáneo", min="0" class="input"></input>
