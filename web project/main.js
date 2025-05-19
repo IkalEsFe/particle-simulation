@@ -9,6 +9,7 @@ var totalValue = 0;
 var changingSliderID = 0;
 var simCanvas = document.getElementById("simulation-canvas");
 var simSlider = document.getElementById("SimulationTime");
+var simStarter = document.getElementById("play");
 var importer = document.getElementById("import");
 var ctx = simCanvas.getContext("2d");
 var sizeMultiplier = 10;
@@ -16,6 +17,8 @@ var maxInstantMovements = 4000;
 var maxInstantMovementsFile = 4000;
 var movementsDone = 0;
 var currentSimLines;
+var playingSim = false
+var simulationFrame = 0
 
 var columns = 0;
 var rows = 0;
@@ -184,16 +187,59 @@ var getSliderID = function(slider)
 function setSimulationMoment(slider)
 {
     ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-    var value = parseInt(slider.value)
+    var value = 0
+    if (slider == true)
+    {
+        value = parseInt(simSlider.value)
+        if (playingSim) togglePlay()
+    }
+    else
+    {
+        value = simulationFrame+1
+        console.log(value)
+        console.log(simSlider.max)
+        if (value > parseInt(simSlider.max))
+        {
+            value = parseInt(simSlider.max)
+            simulationFrame = value
+            if (playingSim) togglePlay()
+        }
+    }
     var moment = parseInt(value)*2
     var frame = currentSimLines[moment+1]
     var pixels = frame.split(")")
+    pixels.pop()
+    console.log(pixels)
     pixels.forEach(pixel => {
         var dividedPixel = pixel.split("(")
         pixel = dividedPixel[1]
         coords = pixel.split(",")
         createPixel(coords[0], coords[1])
     });
+}
+
+function togglePlay()
+{
+    if (playingSim)
+    {
+        simStarter.value = "Play"
+        playingSim = false
+    }
+    else
+    {
+        simStarter.value = "Pause"
+        playingSim = true
+        playSimulation()
+    }
+}
+
+const playSimulation = async () => {
+    while (playingSim) {
+        setSimulationMoment(false)
+        simSlider.value = simulationFrame
+        simulationFrame++
+        await simulationDelay()
+    }
 }
 
 function loadSimulation()
@@ -223,7 +269,9 @@ function loadSimulation()
         },
         false,
     );
+    simulationFrame = 0
     simSlider.disabled = false
+    simStarter.disabled = false
 }
 
 function emptyArray()
@@ -505,8 +553,8 @@ function moveParticleDownFile()
         if (currentParticlePosY+1 >= rows)
         {
             currentPositionString = `(${currentParticlePosX},${currentParticlePosY})`;
-            occupiedPositions.push([currentParticlePosX, currentParticlePosY])
             occupiedPositionsString += currentPositionString;
+            occupiedPositions.push([currentParticlePosX, currentParticlePosY])
             isParticleCreated = false;
         }
         else
@@ -520,7 +568,7 @@ function moveParticleDownFile()
         console.log("Down position occupied");
         currentPositionString = `(${currentParticlePosX},${currentParticlePosY})`;
         occupiedPositions.push([currentParticlePosX, currentParticlePosY])
-        currentPositionString = `(${currentParticlePosX},${currentParticlePosY})`;
+        occupiedPositionsString += currentPositionString;
         isParticleCreated = false;
     }
 }

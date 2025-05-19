@@ -85,4 +85,24 @@ li
 {
     width: 1000px;
     height: 50px;
+    display: inline-block;
+}
+
+#save
+{
+    font-size: 15px;
+}
+
+#play
+{
+    transform: translateY(-20px);
+    display: inline-block;
+    height: 50px;
+    width: 70px;
+    font-size: 100%;
+}
+
+#simulation-actions
+{
+    display: inline-block;
 }
