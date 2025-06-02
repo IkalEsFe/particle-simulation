@@ -106,3 +106,8 @@ li
 {
     display: inline-block;
 }
+
+#visual-options
+{
+    transform: translateY(-20px);
+}

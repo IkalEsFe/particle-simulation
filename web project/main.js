@@ -191,13 +191,14 @@ function setSimulationMoment(slider)
     if (slider == true)
     {
         value = parseInt(simSlider.value)
+        simulationFrame = value
         if (playingSim) togglePlay()
     }
     else
     {
         value = simulationFrame+1
-        console.log(value)
-        console.log(simSlider.max)
+        // console.log(value)
+        // console.log(simSlider.max)
         if (value > parseInt(simSlider.max))
         {
             value = parseInt(simSlider.max)
@@ -209,7 +210,7 @@ function setSimulationMoment(slider)
     var frame = currentSimLines[moment+1]
     var pixels = frame.split(")")
     pixels.pop()
-    console.log(pixels)
+    // console.log(pixels)
     pixels.forEach(pixel => {
         var dividedPixel = pixel.split("(")
         pixel = dividedPixel[1]
@@ -227,6 +228,13 @@ function togglePlay()
     }
     else
     {
+        value = parseInt(simSlider.max)
+        if (simulationFrame >= value)
+        {
+            simulationFrame = 0
+        }
+        // console.log(value)
+        // console.log(simulationFrame)
         simStarter.value = "Pause"
         playingSim = true
         playSimulation()
@@ -234,10 +242,16 @@ function togglePlay()
 }
 
 const playSimulation = async () => {
+    speed = parseInt(document.getElementById("speed").value);
+    var framesToAdd = 1
+    if (speed > 1000)
+    {
+        framesToAdd = Math.round(speed/1000)
+    }
     while (playingSim) {
         setSimulationMoment(false)
         simSlider.value = simulationFrame
-        simulationFrame++
+        simulationFrame += framesToAdd
         await simulationDelay()
     }
 }
@@ -259,6 +273,9 @@ function loadSimulation()
             var options = lines[0].split(",")
             columns = options[0]
             rows = options[1]
+            var scale = parseInt(document.getElementById("scale").value)
+            console.log(scale)
+            sizeMultiplier = scale
             simCanvas.width = columns*sizeMultiplier;
             simCanvas.height = rows*sizeMultiplier;
             lines.shift()
@@ -429,7 +446,14 @@ const simulateParticles = async () => {
 
 
 const simulationDelay = async () => {
-    await delay(1000/speed);
+    if (speed > 1000)
+    {
+        await delay(1)
+    }
+    else
+    {
+        await delay(1000/speed);
+    }
 };
 
 const delay = ms => new Promise(res => setTimeout(res, ms));

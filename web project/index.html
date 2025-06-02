@@ -64,8 +64,14 @@
             <div class="text-holder"><p class="slider-text">Total:</p></div> <div class="text-holder"><p id="TotalText">100</p></div>
         </ul>
     </li>
-        <p>Elige la velocidad de simulación</p> <input type="number" name="Speed" id="speed" value="10", min="0" class="input"></input>
-        <p></p>
+    <li id="visual-options">
+        <ul class="column-row">
+            <p>Elige la velocidad de simulación</p> <input type="number" name="Speed" id="speed" value="1000", min="0" class="input"></input>
+        </ul>
+        <ul class="column-row">
+            <p><small>(requiere reimportación)</small><br>Elige la escala de la simulación</p> <input type="number" name="Scale" id="scale" value="10", min="0" class="input"></input>
+        </ul>
+    </li>
         <p id="import-text">Importar: </p> <input type="file" value="Importar", id="import", accept="text/plain">
         <p></p>
         <!-- <input type="button" value="Generar", id="generate", class="final-button", onclick="generateSimulation()"> -->
