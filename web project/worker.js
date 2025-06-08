@@ -77,7 +77,7 @@ const simulateFile = async () => {
         }
         file = new Blob([file, "\n"+occupiedPositionsString+currentPositionString], { type: "text/plain"})
         currentFrame++;
-        generatingText.textContent = "Generando frame " + currentFrame.toString()
+        generatingText.textContent = "Generando frame: " + currentFrame;
     }
     generatingText.text = ""
     postMessage(file)
@@ -101,7 +101,6 @@ function moveParticleUpFile()
     }
     else
     {
-        console.log("Up position occupied");
         currentPositionString = `(${currentParticlePosX},${currentParticlePosY})`;
         occupiedPositionsString += currentPositionString;
         occupiedPositions.push([currentParticlePosX, currentParticlePosY])
@@ -127,7 +126,6 @@ function moveParticleDownFile()
     }
     else
     {
-        console.log("Down position occupied");
         currentPositionString = `(${currentParticlePosX},${currentParticlePosY})`;
         occupiedPositions.push([currentParticlePosX, currentParticlePosY])
         occupiedPositionsString += currentPositionString;
@@ -150,7 +148,6 @@ function moveParticleLeftFile()
     }
     else
     {
-        console.log("Left position occupied");
         currentPositionString = `(${currentParticlePosX},${currentParticlePosY})`;
         occupiedPositions.push([currentParticlePosX, currentParticlePosY])
         occupiedPositionsString += currentPositionString;
@@ -173,7 +170,6 @@ function moveParticleRightFile()
     }
     else
     {
-        console.log("Right position occupied");
         currentPositionString = `(${currentParticlePosX},${currentParticlePosY})`;
         occupiedPositions.push([currentParticlePosX, currentParticlePosY])
         occupiedPositionsString += currentPositionString;
@@ -186,8 +182,6 @@ function isPositionOccupied(xPos, yPos)
 {
     for (let i = 0; i < occupiedPositions.length; i++) {
         if (occupiedPositions[i][0] == xPos && occupiedPositions[i][1] == yPos) {
-            console.log(currentFrame)
-            console.log(occupiedPositions[i])
             return true
         }
     }
