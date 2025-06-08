@@ -36,7 +36,6 @@ onmessage = (e) =>{
 }
 
 const simulateFile = async () => {
-    generatingText.text = "Generando Simulación..."
     file = new Blob([columns + "," + rows], { type: "text/plain" })
     while (particleAmount >= 0)
     {
@@ -78,7 +77,7 @@ const simulateFile = async () => {
         }
         file = new Blob([file, "\n"+occupiedPositionsString+currentPositionString], { type: "text/plain"})
         currentFrame++;
-        console.log(currentFrame)
+        generatingText.textContent = "Generando frame " + currentFrame.toString()
     }
     generatingText.text = ""
     postMessage(file)
