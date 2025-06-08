@@ -5,6 +5,7 @@ var simCanvas = document.getElementById("simulation-canvas");
 var simSlider = document.getElementById("SimulationTime");
 var simStarter = document.getElementById("play");
 var importer = document.getElementById("import");
+var generatingText = document.getElementById("generating");
 var ctx = simCanvas.getContext("2d");
 var sizeMultiplier = 10;
 var currentSimLines;
@@ -234,10 +235,11 @@ function createSimulationTextfile()
         "rows": rows,
         "particleAmount": particleAmount,
         "upChance": upChance,
-        "downChance": DownChance,
+        "downChance": downChance,
         "leftChance": leftChance,
         "rightChance": rightChance,
-        "height": height
+        "height": height,
+        "generatingText": generatingText
     }
     values = JSON.parse(JSON.stringify(values));
     simWorker.postMessage(values)

@@ -14,6 +14,7 @@ var height = 0;
 var occupiedPositions;
 var currentFrame;
 var isParticleCreated = false;
+var generatingText;
 
 onmessage = (e) =>{
 
@@ -26,6 +27,7 @@ onmessage = (e) =>{
     leftChance = data["leftChance"]
     rightChance = data["rightChance"]
     height = data["height"]
+    generatingText = data["generatingText"]
     isParticleCreated = false
     occupiedPositions = emptyArray()
     occupiedPositionsString = ""
@@ -34,6 +36,7 @@ onmessage = (e) =>{
 }
 
 const simulateFile = async () => {
+    generatingText.text = "Generando Simulación..."
     file = new Blob([columns + "," + rows], { type: "text/plain" })
     while (particleAmount >= 0)
     {
@@ -75,7 +78,9 @@ const simulateFile = async () => {
         }
         file = new Blob([file, "\n"+occupiedPositionsString+currentPositionString], { type: "text/plain"})
         currentFrame++;
+        console.log(currentFrame)
     }
+    generatingText.text = ""
     postMessage(file)
 }
 
