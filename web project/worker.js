@@ -70,7 +70,7 @@ const simulateFile = async () => {
                 }
                 particleAmount--;
                 currentParticlePosY = rows-height;
-                currentParticlePosX = Math.floor(Math.random() * columns)
+                currentParticlePosX = freeSpawnPositions[Math.floor(Math.random() * freeSpawnPositions.length)]
                 currentPositionString = `(${currentParticlePosX},${currentParticlePosY})`;
                 isParticleCreated = true;
             }
