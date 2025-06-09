@@ -11,6 +11,7 @@ var downChance = 25;
 var leftChance = 25;
 var rightChance = 25;
 var height = 0;
+var freeSpawnPositions = [];
 var occupiedPositions;
 var currentFrame;
 var isParticleCreated = false;
@@ -29,6 +30,10 @@ onmessage = (e) =>{
     height = data["height"]
     generatingText = data["generatingText"]
     isParticleCreated = false
+    freeSpawnPositions = emptyArray()
+    for (let i = 0; i < columns; i++) {
+        freeSpawnPositions.push(i)
+    }
     occupiedPositions = emptyArray()
     occupiedPositionsString = ""
     currentFrame = 0;
@@ -50,6 +55,19 @@ const simulateFile = async () => {
 
             if(particleAmount > 0)
             {
+                if (freeSpawnPositions.length == 0)
+                {
+                    height++
+                    if (height >= rows)
+                    {
+                        particleAmount = -1;
+                        return;
+                    }
+                    freeSpawnPositions = emptyArray()
+                    for (let i = 0; i < columns; i++) {
+                        freeSpawnPositions.push(i)
+                    }
+                }
                 particleAmount--;
                 currentParticlePosY = rows-height;
                 currentParticlePosX = Math.floor(Math.random() * columns)
@@ -101,10 +119,7 @@ function moveParticleUpFile()
     }
     else
     {
-        currentPositionString = `(${currentParticlePosX},${currentParticlePosY})`;
-        occupiedPositionsString += currentPositionString;
-        occupiedPositions.push([currentParticlePosX, currentParticlePosY])
-        isParticleCreated = false;
+        placeParticle()
     }
 }
 function moveParticleDownFile()
@@ -126,10 +141,8 @@ function moveParticleDownFile()
     }
     else
     {
-        currentPositionString = `(${currentParticlePosX},${currentParticlePosY})`;
-        occupiedPositions.push([currentParticlePosX, currentParticlePosY])
-        occupiedPositionsString += currentPositionString;
-        isParticleCreated = false;
+        placeParticle()
+
     }
 }
 function moveParticleLeftFile()
@@ -148,10 +161,7 @@ function moveParticleLeftFile()
     }
     else
     {
-        currentPositionString = `(${currentParticlePosX},${currentParticlePosY})`;
-        occupiedPositions.push([currentParticlePosX, currentParticlePosY])
-        occupiedPositionsString += currentPositionString;
-        isParticleCreated = false;
+        placeParticle()
     }
 }
 function moveParticleRightFile()
@@ -170,11 +180,21 @@ function moveParticleRightFile()
     }
     else
     {
-        currentPositionString = `(${currentParticlePosX},${currentParticlePosY})`;
-        occupiedPositions.push([currentParticlePosX, currentParticlePosY])
-        occupiedPositionsString += currentPositionString;
-        isParticleCreated = false;
+        placeParticle()
     }
+}
+
+function placeParticle()
+{
+    currentPositionString = `(${currentParticlePosX},${currentParticlePosY})`;
+    if (currentParticlePosY == rows-height)
+    {
+        var i = freeSpawnPositions.indexOf(currentParticlePosX)
+        freeSpawnPositions.splice(i, 1)
+    }
+    occupiedPositions.push([currentParticlePosX, currentParticlePosY])
+    occupiedPositionsString += currentPositionString;
+    isParticleCreated = false;
 }
 
 
@@ -200,7 +220,4 @@ const simulationDelay = async () => {
 };
 const delay = ms => new Promise(res => setTimeout(res, ms));
 
-function emptyArray()
-{
-    return []
-}
+function emptyArray() { return [] }
