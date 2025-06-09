@@ -1,0 +1,113 @@
+html
+{
+    font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    text-align: center;
+}
+
+li
+{
+    list-style-type: none;
+}
+
+.input
+{
+    resize: none;
+    width: 200px;
+}
+
+#height
+{
+    width: 500px
+}
+#amount
+{
+    width: 500px
+}
+
+
+.column-row
+{
+    display: inline-block;
+    padding-right: 45px;
+}
+
+.result-text
+{
+    display: inline-block;
+}
+
+.chance-slider
+{
+    display: inline-block;
+    transform: translateY(6px);
+}
+
+.text-holder
+{
+    display: inline-block;
+    width: 100px;
+}
+
+.slider-text
+{
+    text-align: left;
+}
+
+.result-text
+{
+    transform: translateX(6px);
+    width: 100px
+}
+
+.final-button
+{
+    font-size: 20px;
+    width: 150px;
+    height: 50px;
+    margin: 10px;
+}
+
+#import-text
+{
+    display: inline-block;
+}
+
+#simulation-canvas
+{
+    outline-style: solid;
+    outline-width: 2px;
+    outline-color: black;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+}
+
+#SimulationTime
+{
+    width: 1000px;
+    height: 50px;
+    display: inline-block;
+}
+
+#save
+{
+    font-size: 15px;
+}
+
+#play
+{
+    transform: translateY(-20px);
+    display: inline-block;
+    height: 50px;
+    width: 70px;
+    font-size: 100%;
+}
+
+#simulation-actions
+{
+    display: inline-block;
+}
+
+#visual-options
+{
+    transform: translateY(-20px);
+}

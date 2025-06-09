@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Particle Simulation</title>
+    <link rel="stylesheet" href="main.css">
+</head>
+<body>
+    <h1>Simulación de Partículas</h1>
+    <p id="generating"></p>
+    <li>
+        <ul class="column-row">
+            <p>Elige el número de columnas:</p> <input type="number" name="Columns" id="columns" value="50" placeholder="Ej: 500" min="10" class="input"></input>
+        </ul>
+        <ul class="column-row">
+            <p>Elige el número de filas:</p> <input type="number" name="Rows" id="rows" value="70" placeholder="Ej: 700" min="10" class="input"></input>
+        </ul>
+    </li>
+    <p>Elige la altura de aparicion de las partículas:</p> <input type="number" name="Height" id="height" value="50" placeholder="Ej: 500" min="7" class="input"></input>
+    <p>Elige la cantidad de partículas:</p> <input type="number" name="Amount" id="amount" value="50" placeholder="Ej: 5000" min="1" class="input"></input>
+    <li id="slider-holder">
+        <p>Elige las probabilidades de movimiento de las partículas</p>
+        <ul class="chance-slider-holder">
+            <div class="text-holder">
+                <p class="slider-text">Arriba:</p>
+            </div> 
+            <input type="range" name="UpChance" oninput="onSliderChange(this)" id="UpChance" value=25 class="chance-slider"> 
+            <div class="text-holder">
+                <input type="number" min="0" max="100" value=25 class="result-text" id="UpText" oninput="onChanceChange(this)">
+            </div>
+        </ul>
+
+        <ul class="chance-slider-holder">
+            <div class="text-holder">
+                <p class="slider-text">Abajo:</p>
+            </div> 
+            <input type="range" name="DownChance" oninput="onSliderChange(this)" id="DownChance" value=25 class="chance-slider"> 
+            <div class="text-holder">
+                <input type="number" min="0" max="100" value=25 class="result-text" id="DownText" oninput="onChanceChange(this)">
+            </div>
+        </ul>
+
+        <ul class="chance-slider-holder">
+            <div class="text-holder">
+                <p class="slider-text">Izquierda:</p>
+            </div> 
+            <input type="range" name="LeftChance" oninput="onSliderChange(this)" id="LeftChance" value=25 class="chance-slider">
+            <div class="text-holder"> 
+                <input type="number" min="0" max="100" value=25 class="result-text" id="LeftText" oninput="onChanceChange(this)">
+            </div>
+        </ul>
+        <ul class="chance-slider-holder">
+            <div class="text-holder">
+                <p class="slider-text">Derecha:</p>
+            </div> 
+            <input type="range" name="RightChance" oninput="onSliderChange(this)" id="RightChance" value=25 class="chance-slider"> 
+            <div class="text-holder">
+                <input type="number" min="0" max="100" value=25 class="result-text"  id="RightText" oninput="onChanceChange(this)">
+            </div>
+        </ul>
+        <ul class="chance-slider-holder">
+            <div class="text-holder"><p class="slider-text">Total:</p></div> <div class="text-holder"><p id="TotalText">100</p></div>
+        </ul>
+    </li>
+    <li id="visual-options">
+        <ul class="column-row">
+            <p>Elige la velocidad de simulación</p> <input type="number" name="Speed" id="speed" value="1000", min="0" class="input"></input>
+        </ul>
+        <ul class="column-row">
+            <p><small>(requiere reimportación)</small><br>Elige la escala de la simulación</p> <input type="number" name="Scale" id="scale" value="10", min="0" class="input"></input>
+        </ul>
+    </li>
+        <p id="import-text">Importar: </p> <input type="file" value="Importar", id="import", accept="text/plain">
+        <p></p>
+        <!-- <input type="button" value="Generar", id="generate", class="final-button", onclick="generateSimulation()"> -->
+        <input type="button", value="Generar y Guardar" id="save", class="final-button", onclick="createSimulationTextfile()"></input>
+        <input type="button" value="Cargar", id="load", class="final-button", onclick="loadSimulation()">
+        <p></p>
+        <div id="simulation-actions">
+            <input type="button", value="Play", id="play", disabled="true", onclick="togglePlay()">
+            <input type="range" name="SimulationMoment" id="SimulationTime" value=0 disabled="true", oninput="setSimulationMoment(true)">
+        </div>
+        <p></p>
+    <canvas id="simulation-canvas", width="300", height="300"></canvas>
+</body>
+<script src="main.js"></script>
+</html>
