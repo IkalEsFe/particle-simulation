@@ -12,6 +12,7 @@ var currentSimLines;
 var playingSim = false
 var simulationFrame = 0
 const simWorker = new Worker("worker.js")
+var fileParts = []
 
 var columns = 0;
 var rows = 0;
@@ -250,11 +251,14 @@ simWorker.onmessage = (e) =>
     if (data.type === "updateStatus") 
     {
         generatingText.textContent = data.message;
-    } 
-    else if (data instanceof Blob) 
+    }
+    else if (data.type === "buffer")
     {
-        
-        file = data
+        fileParts.push(data.message)
+    }
+    else if (data.type === "done") 
+    {
+        file = new Blob(fileParts, { type: "text/plain" });
         generatingText.textContent = ""
         downloadSimulation()
     }
@@ -293,11 +297,13 @@ function simulationSetup()
         return;
     }
     ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+    fileParts = emptyArray()
     downChance = downChance+upChance;
     leftChance = leftChance+downChance;
     rightChance = rightChance+leftChance;
 }
 
+function emptyArray() { return [] }
 
 function createPixelRaw(xPos, yPos, r, g, b, a) {
     var id = ctx.createImageData(sizeMultiplier, sizeMultiplier);

@@ -15,6 +15,7 @@ var freeSpawnPositions = [];
 var occupiedPositions;
 var currentFrame;
 var isParticleCreated = false;
+var buffer = ""
 
 onmessage = (e) =>{
 
@@ -39,10 +40,10 @@ onmessage = (e) =>{
 }
 
 const simulateFile = async () => {
-    file = new Blob([columns + "," + rows], { type: "text/plain" })
+    buffer = `${columns},${rows}`
     while (particleAmount >= 0)
     {
-        file = new Blob([file, "\nFrame "+currentFrame])
+        buffer += `\nFrame ${currentFrame}`
         if (!isParticleCreated)
         {
             
@@ -91,11 +92,19 @@ const simulateFile = async () => {
             else if(randomMovement < rightChance)
                 moveParticleRightFile();
         }
-        file = new Blob([file, "\n"+occupiedPositionsString+currentPositionString], { type: "text/plain"})
+        buffer += `\n${occupiedPositionsString}${currentPositionString}`
         postMessage({ type: "updateStatus", message: `Generando frame: ${currentFrame}` });
+        if (currentFrame % 5000 == 0)
+        {
+            postMessage({type: "buffer", message: buffer})
+            buffer = ""
+        }
         currentFrame++;
     }
-    postMessage(file)
+    
+    postMessage({type: "buffer", message: buffer})
+    buffer = ""
+    postMessage({type: "done", message: "yippie"})
 }
 
 
