@@ -95,7 +95,6 @@ const simulateFile = async () => {
         postMessage({ type: "updateStatus", message: `Generando frame: ${currentFrame}` });
         currentFrame++;
     }
-    generatingText.text = ""
     postMessage(file)
 }
 
