@@ -16,6 +16,7 @@ var occupiedPositions;
 var currentFrame;
 var isParticleCreated = false;
 var buffer = ""
+var skip = false
 
 onmessage = (e) =>{
 
@@ -60,7 +61,7 @@ const simulateFile = async () => {
                     if (height >= rows)
                     {
                         particleAmount = 0;
-                        return;
+                        break;
                     }
                     freeSpawnPositions = emptyArray()
                     for (let i = 0; i < columns; i++) {
