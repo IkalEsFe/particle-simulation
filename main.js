@@ -199,34 +199,92 @@ function loadSimulation()
         alert("No hay ningún archivo seleccionado")
         return
     }
-    reader.readAsText(selectedFile)
-    reader.addEventListener(
-    "load",
-        () => {
-            // this will then display a text file
-            var lines = reader.result.split("\n")
-            var options = lines[0].split(",")
-            columns = options[0]
-            rows = options[1]
-            var scale = parseInt(document.getElementById("scale").value)
-            console.log(scale)
-            sizeMultiplier = scale
-            simCanvas.width = columns*sizeMultiplier;
-            simCanvas.height = rows*sizeMultiplier;
-            lines.shift()
-            var frame = lines[lines.length-2]
-            var frameNum = parseInt(frame.replace(/^\D+/g, ''));
-            simSlider.max = frameNum
-            currentSimLines = lines
-        },
-        false,
-    );
-    simulationFrame = 0
-    simSlider.disabled = false
-    simStarter.disabled = false
+    // reader.readAsText(selectedFile)
+    // reader.addEventListener(
+    // "load",
+    //     () => {
+    //         // this will then display a text file
+    //         var lines = reader.result.split("\n")
+    //         var options = lines[0].split(",")
+    //         columns = options[0]
+    //         rows = options[1]
+    //         var scale = parseInt(document.getElementById("scale").value)
+    //         console.log(scale)
+    //         sizeMultiplier = scale
+    //         simCanvas.width = columns*sizeMultiplier;
+    //         simCanvas.height = rows*sizeMultiplier;
+    //         lines.shift()
+    //         var frame = lines[lines.length-2]
+    //         var frameNum = parseInt(frame.replace(/^\D+/g, ''));
+    //         simSlider.max = frameNum
+    //         currentSimLines = lines
+    //     },
+    //     false,
+    // );
+    // simulationFrame = 0
+    // simSlider.disabled = false
+    // simStarter.disabled = false
+
+    const CHUNK_SIZE = 1024 * 1024; // 1MB por bloque
+    const decoder = new TextDecoder("utf-8");
+    let offset = 0;
+    let leftover = "";
+    let lines = [];
+
+    function processChunk(text) {
+        const combined = leftover + text;
+        const parts = combined.split("\n");
+        leftover = parts.pop(); // la última puede estar incompleta
+        lines.push(...parts);
+    }
+
+    function readNextChunk() {
+        const slice = selectedFile.slice(offset, offset + CHUNK_SIZE);
+        const reader = new FileReader();
+
+        reader.onload = () => {
+            const text = decoder.decode(reader.result, { stream: true });
+            processChunk(text);
+
+            offset += CHUNK_SIZE;
+            if (offset < selectedFile.size) {
+                readNextChunk();
+            } else {
+                if (leftover) lines.push(leftover);
+                finalizeLoad(lines);
+            }
+        };
+
+        reader.onerror = () => {
+            alert("Error al leer el archivo.");
+        };
+
+        reader.readAsArrayBuffer(slice);
+    }
+
+    readNextChunk();
 }
 
+function finalizeLoad(lines) {
+    var options = lines[0].split(",");
+    columns = parseInt(options[0]);
+    rows = parseInt(options[1]);
+    
+    var scale = parseInt(document.getElementById("scale").value);
+    sizeMultiplier = scale;
+    simCanvas.width = columns * sizeMultiplier;
+    simCanvas.height = rows * sizeMultiplier;
 
+    lines.shift();
+    var frame = lines[lines.length - 2];
+    var frameNum = parseInt(frame.replace(/^\D+/g, ''));
+    simSlider.max = frameNum;
+    currentSimLines = lines;
+
+    simulationFrame = 0;
+    simSlider.disabled = false;
+    simStarter.disabled = false;
+}
 
 function createSimulationTextfile()
 {
