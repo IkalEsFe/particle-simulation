@@ -239,7 +239,6 @@ function createSimulationTextfile()
         "leftChance": leftChance,
         "rightChance": rightChance,
         "height": height,
-        "generatingText": generatingText
     }
     values = JSON.parse(JSON.stringify(values));
     simWorker.postMessage(values)
@@ -247,8 +246,18 @@ function createSimulationTextfile()
 
 simWorker.onmessage = (e) =>
 {
-    file = e.data
-    downloadSimulation()
+    const data = e.data;
+    if (data.type === "updateStatus") 
+    {
+        generatingText.textContent = data.message;
+    } 
+    else if (data instanceof Blob) 
+    {
+        
+        file = data
+        generatingText.textContent = ""
+        downloadSimulation()
+    }
 }
 
 function downloadSimulation()

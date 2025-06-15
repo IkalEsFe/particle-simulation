@@ -15,7 +15,6 @@ var freeSpawnPositions = [];
 var occupiedPositions;
 var currentFrame;
 var isParticleCreated = false;
-var generatingText;
 
 onmessage = (e) =>{
 
@@ -28,7 +27,6 @@ onmessage = (e) =>{
     leftChance = data["leftChance"]
     rightChance = data["rightChance"]
     height = data["height"]
-    generatingText = data["generatingText"]
     isParticleCreated = false
     freeSpawnPositions = emptyArray()
     for (let i = 0; i < columns; i++) {
@@ -60,7 +58,7 @@ const simulateFile = async () => {
                     height++
                     if (height >= rows)
                     {
-                        particleAmount = -1;
+                        particleAmount = 0;
                         return;
                     }
                     freeSpawnPositions = emptyArray()
@@ -94,8 +92,8 @@ const simulateFile = async () => {
                 moveParticleRightFile();
         }
         file = new Blob([file, "\n"+occupiedPositionsString+currentPositionString], { type: "text/plain"})
+        postMessage({ type: "updateStatus", message: `Generando frame: ${currentFrame}` });
         currentFrame++;
-        generatingText.textContent = "Generando frame: " + currentFrame;
     }
     generatingText.text = ""
     postMessage(file)
