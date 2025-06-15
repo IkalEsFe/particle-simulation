@@ -58,7 +58,7 @@ const simulateFile = async () => {
                 if (freeSpawnPositions.length == 0)
                 {
                     height++
-                    if (height >= rows)
+                    if (height > rows)
                     {
                         particleAmount = 0;
                         buffer += `\n${occupiedPositionsString}${currentPositionString}`
