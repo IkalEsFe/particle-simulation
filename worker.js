@@ -94,7 +94,7 @@ const simulateFile = async () => {
         }
         buffer += `\n${occupiedPositionsString}${currentPositionString}`
         postMessage({ type: "updateStatus", message: `Generando frame: ${currentFrame}` });
-        if (currentFrame % 5000 == 0)
+        if (currentFrame % 5000 === 0)
         {
             postMessage({type: "buffer", message: buffer})
             buffer = ""
